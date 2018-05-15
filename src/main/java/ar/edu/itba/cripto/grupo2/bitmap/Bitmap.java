@@ -50,7 +50,7 @@ public class Bitmap {
     }
 
     public byte[] getBytes() {
-        return Arrays.copyOf(bytes, bytes.length); // Arrays.copyOf?
+        return Arrays.copyOf(bytes, bytes.length);
     }
 
     public int getWidth() {

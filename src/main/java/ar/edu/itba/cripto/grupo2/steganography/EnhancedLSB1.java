@@ -10,6 +10,9 @@ import java.util.List;
 public class EnhancedLSB1 implements SteganographyStrategy {
 
     private static final int BYTE_MASK = 0xFF;
+    private static final int WRITTEN_BYTES_PER_BYTE = 8;
+    private static final int THRESHOLD_VALUE = 253;
+
     private List<Byte> byteList = new ArrayList<>();
 
     @Override
@@ -19,7 +22,7 @@ public class EnhancedLSB1 implements SteganographyStrategy {
 
         while (selector >= 0) {
             int next = buffer.get() & BYTE_MASK;
-            if (next < 254) {
+            if (next <= THRESHOLD_VALUE) {
                 byteList.add((byte)next);
             } else {
                 boolean isOne = (b & (1 << selector)) != 0;
@@ -40,6 +43,23 @@ public class EnhancedLSB1 implements SteganographyStrategy {
         }
 
         return bytes;
+    }
+
+    @Override
+    public byte nextByteDecode(ByteBuffer buffer) {
+        int b = 0;
+
+        int i = 0;
+        while (i < WRITTEN_BYTES_PER_BYTE) {
+            int next = buffer.get() & BYTE_MASK;
+            if (next > THRESHOLD_VALUE) {
+                next = next & 1;
+                b = (b << 1) | next;
+                i++;
+            }
+        }
+
+        return (byte)b;
     }
 
     @Override

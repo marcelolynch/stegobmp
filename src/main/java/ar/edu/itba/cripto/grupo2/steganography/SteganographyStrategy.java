@@ -6,5 +6,6 @@ import java.nio.ByteBuffer;
 
 public interface SteganographyStrategy {
     byte[] nextBytes(byte b, ByteBuffer buffer);
+    byte nextByteDecode(ByteBuffer buffer);
     int steganographableBytes(Bitmap b);
 }

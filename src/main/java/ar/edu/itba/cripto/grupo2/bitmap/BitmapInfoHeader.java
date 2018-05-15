@@ -88,7 +88,6 @@ public class BitmapInfoHeader {
         biClrImportant = bb.getInt();
     }
 
-
     public int getBiSize() {
         return biSize;
     }

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class LSB4Test {
@@ -36,13 +37,12 @@ public class LSB4Test {
         byte[] processed = lsb4.nextBytes((byte)0x43, bb);
         byte[] expected = {0x04,(byte)0xF3};
 
-        assert(Arrays.equals(expected, processed));
+        assertArrayEquals(expected, processed);
 
         processed = lsb4.nextBytes((byte)0xBB, bb);
-        expected = new byte[]{0x7B, (byte) 0x6B};
+        expected = new byte[]{0x7B, (byte)0x6B};
 
-        assert(Arrays.equals(expected, processed));
-
+        assertArrayEquals(expected, processed);
     }
 
     @Test

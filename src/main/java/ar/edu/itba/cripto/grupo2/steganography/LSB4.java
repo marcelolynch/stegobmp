@@ -18,7 +18,8 @@ public class LSB4 implements SteganographyStrategy {
 
         int next = buffer.get() & BYTE_MASK;
         int selected = (targetByte & FIRST_FOUR_BITS_MASK) >>> 4;
-        bytes[0] = (byte) (next & ~FIRST_FOUR_BITS_MASK | selected);
+        int masked = next & ~LAST_FOUR_BITS_MASK;
+        bytes[0] = (byte) (masked | selected);
 
         next = buffer.get() & BYTE_MASK;
         selected = targetByte & LAST_FOUR_BITS_MASK;
@@ -26,6 +27,14 @@ public class LSB4 implements SteganographyStrategy {
         bytes[1] = (byte) (cleared | selected);
 
         return bytes;
+    }
+
+
+    @Override
+    public byte nextByteDecode(ByteBuffer buffer) {
+        int high = buffer.get() & LAST_FOUR_BITS_MASK;
+        int low = buffer.get() & LAST_FOUR_BITS_MASK;
+        return (byte)(high << 4 | low);
     }
 
     @Override
