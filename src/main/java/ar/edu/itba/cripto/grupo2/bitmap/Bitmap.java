@@ -13,7 +13,7 @@ public class Bitmap {
 
     public static final int HEADER_SIZE = FILE_HEADER_SIZE + INFO_HEADER_SIZE;
     public static final int BYTES_PER_PIXEL = 3;
-    public static final int COMPRESSION_BI_RGB = 0; // Creo que no amerita un enum
+    public static final int COMPRESSION_BI_RGB = 0x0000; // Creo que no amerita un enum
 
     public Bitmap(byte[] imageBytes) {
         this.fileHeader = new BitmapFileHeader(Arrays.copyOfRange(imageBytes, 0, FILE_HEADER_SIZE));
@@ -21,11 +21,9 @@ public class Bitmap {
         this.bytes = Arrays.copyOf(imageBytes, imageBytes.length);
     }
 
-
-    public static boolean hasNoCompression(Bitmap bmp) {
+    public static boolean isUncompressed(Bitmap bmp) {
         return bmp.getInfoHeader().getBiCompression() == COMPRESSION_BI_RGB;
     }
-
 
     public byte byteAt(int position) {
         return bytes[HEADER_SIZE + position];
@@ -65,5 +63,9 @@ public class Bitmap {
 
     public int getPixelCount() {
         return getWidth() * getHeight();
+    }
+
+    public byte[] getImageBytes() {
+        return Arrays.copyOfRange(bytes, HEADER_SIZE, bytes.length);
     }
 }

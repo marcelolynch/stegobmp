@@ -3,12 +3,17 @@ package ar.edu.itba.cripto.grupo2.steganography;
 import ar.edu.itba.cripto.grupo2.bitmap.Bitmap;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
-public class PlainTextSteganographer implements Steganographer {
+public class PlaintextSteganographer implements Steganographer {
 
     private static final int FILE_SIZE_HEADER_BYTES = 4;
 
     private SteganographyStrategy strategy;
+
+    public PlaintextSteganographer(SteganographyStrategy strategy) {
+        this.strategy = strategy;
+    }
 
     private int writeSize(Message p) {
         return FILE_SIZE_HEADER_BYTES + p.getPayload().length + p.getExtension().getBytes().length + 1;
@@ -26,14 +31,15 @@ public class PlainTextSteganographer implements Steganographer {
         }
         byte[] payload = p.getPayload();
 
-        ByteBuffer bb = ByteBuffer.allocate(FILE_SIZE_HEADER_BYTES + payload.length + p.getExtension().length() + 1);
-
+        ByteBuffer bb = ByteBuffer.allocate(FILE_SIZE_HEADER_BYTES + payload.length + p.getExtension().length() + 1)
+                                  .order(ByteOrder.BIG_ENDIAN);
         bb.putInt(payload.length);
         bb.put(payload);
         bb.put(p.getExtension().getBytes());
         bb.put((byte)0);
+        bb.flip();
 
-        ByteBuffer pictureBytes = ByteBuffer.wrap(bitmap.getBytes());
+        ByteBuffer pictureBytes = ByteBuffer.wrap(bitmap.getImageBytes());
 
         int i = 0;
         while (bb.hasRemaining() && i < bitmap.getImageByteSize()) { // TODO: Checks
@@ -43,7 +49,6 @@ public class PlainTextSteganographer implements Steganographer {
                 i++;
             }
         }
-
         if (bb.hasRemaining()) {
             throw new IllegalStateException("Couldn't write all bytes");
         }

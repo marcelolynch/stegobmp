@@ -10,11 +10,11 @@ import java.util.List;
 public class EnhancedLSB1 implements SteganographyStrategy {
 
     private static final int BYTE_MASK = 0xFF;
+    private List<Byte> byteList = new ArrayList<>();
 
     @Override
     public byte[] nextBytes(byte b, ByteBuffer buffer) {
-        List<Byte> byteList = new ArrayList<>();
-
+        byteList.clear();
         int selector = 7; // Elijo los bits de izquierda a derecha, empezando por el bit 7
 
         while (selector >= 0) {

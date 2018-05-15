@@ -12,7 +12,7 @@ public class BitmapInfoHeader {
     /**
      * The number of bytes required by the structure.
     **/
-     private int biSize;
+    private int biSize;
 
     /**
      The width of the bitmap, in pixels.

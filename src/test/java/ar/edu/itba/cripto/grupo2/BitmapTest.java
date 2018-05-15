@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -53,7 +52,7 @@ public class BitmapTest {
         assertEquals(2, bmp.getHeight());
         assertEquals(4, bmp.getPixelCount());
 
-        assertTrue(Bitmap.hasNoCompression(bmp));
+        assertTrue(Bitmap.isUncompressed(bmp));
     }
 
 
