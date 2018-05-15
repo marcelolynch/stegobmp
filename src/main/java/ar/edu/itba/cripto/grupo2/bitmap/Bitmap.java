@@ -13,7 +13,7 @@ public class Bitmap {
 
     public static final int HEADER_SIZE = FILE_HEADER_SIZE + INFO_HEADER_SIZE;
     public static final int BYTES_PER_PIXEL = 3;
-    public static final int COMPRESSION_BI_RGB = 0x0000; // Creo que no amerita un enum
+    private static final int COMPRESSION_BI_RGB = 0x0000; // Creo que no amerita un enum
 
     public Bitmap(byte[] imageBytes) {
         this.fileHeader = new BitmapFileHeader(Arrays.copyOfRange(imageBytes, 0, FILE_HEADER_SIZE));
@@ -50,7 +50,7 @@ public class Bitmap {
     }
 
     public byte[] getBytes() {
-        return bytes; // Arrays.copyOf?
+        return Arrays.copyOf(bytes, bytes.length); // Arrays.copyOf?
     }
 
     public int getWidth() {
