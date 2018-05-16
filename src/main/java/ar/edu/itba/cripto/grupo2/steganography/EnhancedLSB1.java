@@ -23,16 +23,12 @@ public class EnhancedLSB1 implements SteganographyStrategy {
         while (selector >= 0) {
             int next = buffer.get() & BYTE_MASK;
             if (next <= THRESHOLD_VALUE) {
-                byteList.add((byte)next);
+                byteList.add((byte) next);
             } else {
-                boolean isOne = (b & (1 << selector)) != 0;
+                next = (byte) (next & ~1);
+                next |= (b & (1 << selector)) >> selector;
+                byteList.add((byte) next);
                 selector--;
-
-                if (isOne) {
-                    byteList.add((byte) (next | 1));
-                } else {
-                    byteList.add((byte) (next & ~1));
-                }
             }
         }
 
