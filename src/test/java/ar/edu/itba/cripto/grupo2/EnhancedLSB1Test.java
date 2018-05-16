@@ -55,7 +55,7 @@ public class EnhancedLSB1Test {
 
     @Test
     public void steganographableELSB1Test() throws IOException {
-        byte[] file = IOUtils.toByteArray(new FileInputStream("whitesquare.bmp"));
+        byte[] file = IOUtils.toByteArray(new FileInputStream("resources/test/whitesquare.bmp"));
         Bitmap bmp = new Bitmap(file);
         assertEquals(bmp.getImageByteSize()/8, elsb1.maximumEncodingSize(bmp)); // Todos los pixeles son blancos, puedo meter cosas en todos
     }

@@ -24,7 +24,7 @@ public class PlaintextSteganographerTest {
     public void ptsTest() throws IOException {
         pts = new PlaintextSteganographer(new LSB4());
 
-        byte[] file = IOUtils.toByteArray(new FileInputStream("4x4.bmp"));
+        byte[] file = IOUtils.toByteArray(new FileInputStream("resources/test/4x4.bmp"));
         Bitmap bmp = new Bitmap(file);
 
         byte[] payload = "hola".getBytes();   // 0x68 0x6F 0x6C 0x61
@@ -50,7 +50,7 @@ public class PlaintextSteganographerTest {
     @Test
     public void ptsReadTest() throws IOException {
         pts = new PlaintextSteganographer(new LSB4());
-        byte[] file = IOUtils.toByteArray(new FileInputStream("4x4encoded.bmp"));
+        byte[] file = IOUtils.toByteArray(new FileInputStream("resources/test/4x4encoded.bmp"));
         Bitmap bmp = new Bitmap(file);
 
         Message message = pts.read(bmp);

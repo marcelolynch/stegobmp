@@ -61,7 +61,7 @@ public class LSB4Test {
 
     @Test
     public void steganographablelsb1Test() throws IOException {
-        byte[] file = IOUtils.toByteArray(new FileInputStream("pixels.bmp"));
+        byte[] file = IOUtils.toByteArray(new FileInputStream("resources/test/pixels.bmp"));
         Bitmap bmp = new Bitmap(file);
         assertEquals(8, lsb4.maximumEncodingSize(bmp));
     }

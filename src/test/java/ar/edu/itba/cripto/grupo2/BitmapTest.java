@@ -58,7 +58,7 @@ public class BitmapTest {
 
     @Test
     public void bitmapTestWhiteSquare() throws IOException{
-       byte[] file = IOUtils.toByteArray(new FileInputStream("whitesquare.bmp"));
+       byte[] file = IOUtils.toByteArray(new FileInputStream("resources/test/whitesquare.bmp"));
         Bitmap bmp = new Bitmap(file);
 
         assertEquals(54, bmp.getFileHeader().getOffset());
