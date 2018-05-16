@@ -10,9 +10,11 @@ import org.junit.Test;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class PlaintextSteganographerTest {
@@ -20,7 +22,7 @@ public class PlaintextSteganographerTest {
 
     @Test
     public void ptsTest() throws IOException {
-        PlaintextSteganographer pts = new PlaintextSteganographer(new LSB4());
+        pts = new PlaintextSteganographer(new LSB4());
 
         byte[] file = IOUtils.toByteArray(new FileInputStream("4x4.bmp"));
         Bitmap bmp = new Bitmap(file);
@@ -29,8 +31,10 @@ public class PlaintextSteganographerTest {
 
         Message msg = new Message(".txt", payload); // 0x2E 0x74 0x78 0x74
 
+
         assert(pts.canWrite(bmp, msg));
         pts.write(bmp, msg);
+
 
         // Size = 0x04
         byte[] stegBody = {
@@ -40,7 +44,19 @@ public class PlaintextSteganographerTest {
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         };
 
-        assert(Arrays.equals(stegBody, bmp.getImageBytes()));
+        assertArrayEquals(stegBody, bmp.getImageBytes());
+    }
+
+    @Test
+    public void ptsReadTest() throws IOException {
+        pts = new PlaintextSteganographer(new LSB4());
+        byte[] file = IOUtils.toByteArray(new FileInputStream("4x4encoded.bmp"));
+        Bitmap bmp = new Bitmap(file);
+
+        Message message = pts.read(bmp);
+
+        assertArrayEquals("hola".getBytes(), message.getPayload());
+        assertEquals(".txt", message.getExtension());
     }
 
 }

@@ -15,8 +15,9 @@ public class EnhancedLSB1 implements SteganographyStrategy {
 
     private List<Byte> byteList = new ArrayList<>();
 
+
     @Override
-    public byte[] nextBytes(byte b, ByteBuffer buffer) {
+    public byte[] nextEncodedBytes(byte b, ByteBuffer buffer) {
         byteList.clear();
         int selector = 7; // Elijo los bits de izquierda a derecha, empezando por el bit 7
 
@@ -46,7 +47,7 @@ public class EnhancedLSB1 implements SteganographyStrategy {
     }
 
     @Override
-    public byte nextByteDecode(ByteBuffer buffer) {
+    public byte nextDecodedByte(ByteBuffer buffer) {
         int b = 0;
 
         int i = 0;
@@ -62,8 +63,9 @@ public class EnhancedLSB1 implements SteganographyStrategy {
         return (byte)b;
     }
 
+
     @Override
-    public int steganographableBytes(Bitmap bitmap) {
+    public int maximumEncodingSize(Bitmap bitmap) {
         int count = 0;
         for (byte b : bitmap.getBytes()) {
             if ((b & BYTE_MASK) >= 254) {   // Cast to int to make comparison

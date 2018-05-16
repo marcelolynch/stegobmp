@@ -22,5 +22,5 @@ public interface Steganographer {
     *  Lanza IllegalArgumentException si es imposible interpretar los datos
     *  del bitmap como esteganografiados
     * */
-    byte[] read(final Bitmap bitmap) throws IllegalArgumentException;
+    Message read(final Bitmap bitmap) throws IllegalArgumentException;
 }

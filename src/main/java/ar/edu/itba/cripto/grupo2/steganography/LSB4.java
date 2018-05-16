@@ -12,7 +12,7 @@ public class LSB4 implements SteganographyStrategy {
     private static final int BYTE_MASK = 0xFF;
 
     @Override
-    public byte[] nextBytes(byte b, ByteBuffer buffer) {
+    public byte[] nextEncodedBytes(byte b, ByteBuffer buffer) {
         int targetByte = b & BYTE_MASK; // Las mascaras funcionan en int
         byte[] bytes = new byte[WRITTEN_BYTES_PER_BYTE];
 
@@ -31,14 +31,14 @@ public class LSB4 implements SteganographyStrategy {
 
 
     @Override
-    public byte nextByteDecode(ByteBuffer buffer) {
+    public byte nextDecodedByte(ByteBuffer buffer) {
         int high = buffer.get() & LAST_FOUR_BITS_MASK;
         int low = buffer.get() & LAST_FOUR_BITS_MASK;
         return (byte)(high << 4 | low);
     }
 
     @Override
-    public int steganographableBytes(Bitmap b) {
+    public int maximumEncodingSize(Bitmap b) {
         return b.getImageByteSize() / WRITTEN_BYTES_PER_BYTE;
     }
 }

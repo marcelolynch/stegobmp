@@ -10,7 +10,7 @@ public class LSB1 implements SteganographyStrategy {
     private static final int LAST_BYTE_MASK = 1;
 
     @Override
-    public byte[] nextBytes(byte b, ByteBuffer buffer) {
+    public byte[] nextEncodedBytes(byte b, ByteBuffer buffer) {
         byte[] bytes = new byte[WRITTEN_BYTES_PER_BYTE];
 
         int selector = 7; // Elijo los bits de izquierda a derecha, empezando por el bit 7
@@ -31,7 +31,7 @@ public class LSB1 implements SteganographyStrategy {
     }
 
     @Override
-    public byte nextByteDecode(ByteBuffer buffer) {
+    public byte nextDecodedByte(ByteBuffer buffer) {
         int b = 0;
 
         for(int i = 0 ; i < WRITTEN_BYTES_PER_BYTE ; i++){
@@ -43,7 +43,7 @@ public class LSB1 implements SteganographyStrategy {
     }
 
     @Override
-    public int steganographableBytes(Bitmap b) {
+    public int maximumEncodingSize(Bitmap b) {
         return b.getImageByteSize() / WRITTEN_BYTES_PER_BYTE;
     }
 }

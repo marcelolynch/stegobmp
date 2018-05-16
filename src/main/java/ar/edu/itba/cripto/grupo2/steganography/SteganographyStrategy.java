@@ -5,7 +5,12 @@ import ar.edu.itba.cripto.grupo2.bitmap.Bitmap;
 import java.nio.ByteBuffer;
 
 public interface SteganographyStrategy {
-    byte[] nextBytes(byte b, ByteBuffer buffer);
-    byte nextByteDecode(ByteBuffer buffer);
-    int steganographableBytes(Bitmap b);
+
+    default boolean canHold(Bitmap bitmap, int size) {
+        return maximumEncodingSize(bitmap) >= size;
+    }
+
+    byte[] nextEncodedBytes(byte b, ByteBuffer buffer);
+    byte nextDecodedByte(ByteBuffer buffer);
+    int maximumEncodingSize(Bitmap b);
 }
