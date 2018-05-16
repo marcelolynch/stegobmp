@@ -66,4 +66,6 @@ public class BitmapTest {
         assertEquals(100, bmp.getWidth());
         assertEquals(100*100, bmp.getPixelCount());
     }
+
+
 }

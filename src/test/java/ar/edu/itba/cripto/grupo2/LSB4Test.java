@@ -8,7 +8,6 @@ import org.junit.Test;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -63,7 +62,7 @@ public class LSB4Test {
     public void steganographablelsb1Test() throws IOException {
         byte[] file = IOUtils.toByteArray(new FileInputStream("resources/test/pixels.bmp"));
         Bitmap bmp = new Bitmap(file);
-        assertEquals(8, lsb4.maximumEncodingSize(bmp));
+        assertEquals(8, lsb4.maximumEncodingSize(ByteBuffer.wrap(bmp.getImageBytes())));
     }
 
 

@@ -1,7 +1,5 @@
 package ar.edu.itba.cripto.grupo2.steganography;
 
-import ar.edu.itba.cripto.grupo2.bitmap.Bitmap;
-
 import java.nio.ByteBuffer;
 
 public class LSB4 implements SteganographyStrategy {
@@ -38,7 +36,7 @@ public class LSB4 implements SteganographyStrategy {
     }
 
     @Override
-    public int maximumEncodingSize(Bitmap b) {
-        return b.getImageByteSize() / WRITTEN_BYTES_PER_BYTE;
+    public int maximumEncodingSize(ByteBuffer b) {
+        return b.remaining() / WRITTEN_BYTES_PER_BYTE;
     }
 }

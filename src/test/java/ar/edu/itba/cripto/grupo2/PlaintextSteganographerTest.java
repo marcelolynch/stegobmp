@@ -1,7 +1,6 @@
 package ar.edu.itba.cripto.grupo2;
 
 import ar.edu.itba.cripto.grupo2.bitmap.Bitmap;
-import ar.edu.itba.cripto.grupo2.steganography.LSB1;
 import ar.edu.itba.cripto.grupo2.steganography.LSB4;
 import ar.edu.itba.cripto.grupo2.steganography.Message;
 import ar.edu.itba.cripto.grupo2.steganography.PlaintextSteganographer;
@@ -9,10 +8,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;

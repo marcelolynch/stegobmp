@@ -1,11 +1,7 @@
 package ar.edu.itba.cripto.grupo2.steganography;
 
-import ar.edu.itba.cripto.grupo2.bitmap.Bitmap;
-
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class EnhancedLSB1 implements SteganographyStrategy {
 
@@ -13,33 +9,26 @@ public class EnhancedLSB1 implements SteganographyStrategy {
     private static final int WRITTEN_BYTES_PER_BYTE = 8;
     private static final int THRESHOLD_VALUE = 253;
 
-    private List<Byte> byteList = new ArrayList<>();
 
 
     @Override
     public byte[] nextEncodedBytes(byte b, ByteBuffer buffer) {
-        byteList.clear();
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         int selector = 7; // Elijo los bits de izquierda a derecha, empezando por el bit 7
 
         while (selector >= 0) {
             int next = buffer.get() & BYTE_MASK;
             if (next <= THRESHOLD_VALUE) {
-                byteList.add((byte) next);
+                bytes.write(next);
             } else {
-                next = (byte) (next & ~1);
+                next = next & ~1;
                 next |= (b & (1 << selector)) >> selector;
-                byteList.add((byte) next);
+                bytes.write(next);
                 selector--;
             }
         }
 
-        byte[] bytes = new byte[byteList.size()];
-
-        for (int i = 0 ; i < byteList.size() ; i++) {
-            bytes[i] = byteList.get(i);
-        }
-
-        return bytes;
+        return bytes.toByteArray();
     }
 
     @Override
@@ -61,13 +50,16 @@ public class EnhancedLSB1 implements SteganographyStrategy {
 
 
     @Override
-    public int maximumEncodingSize(Bitmap bitmap) {
+    public int maximumEncodingSize(ByteBuffer buffer) {
         int count = 0;
-        for (byte b : bitmap.getBytes()) {
+        buffer.mark();
+        while(buffer.hasRemaining()) {
+            byte b = buffer.get();
             if ((b & BYTE_MASK) >= 254) {   // Cast to int to make comparison
                 count++;
             }
         }
+        buffer.reset();
         return count / 8; // 8 bytes por bit
     }
 }

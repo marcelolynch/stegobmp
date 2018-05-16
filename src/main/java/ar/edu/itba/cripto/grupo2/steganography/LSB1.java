@@ -36,7 +36,7 @@ public class LSB1 implements SteganographyStrategy {
     }
 
     @Override
-    public int maximumEncodingSize(Bitmap b) {
-        return b.getImageByteSize() / WRITTEN_BYTES_PER_BYTE;
+    public int maximumEncodingSize(ByteBuffer b) {
+        return b.remaining() / WRITTEN_BYTES_PER_BYTE;
     }
 }
