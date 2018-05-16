@@ -12,19 +12,12 @@ public class LSB1 implements SteganographyStrategy {
     @Override
     public byte[] nextEncodedBytes(byte b, ByteBuffer buffer) {
         byte[] bytes = new byte[WRITTEN_BYTES_PER_BYTE];
-
-        int selector = 7; // Elijo los bits de izquierda a derecha, empezando por el bit 7
-
-        for (int i = 0 ; i < WRITTEN_BYTES_PER_BYTE ; i++) {
+        int k = 0;
+        for (int i = WRITTEN_BYTES_PER_BYTE - 1; i >= 0; i--) {
             byte next = buffer.get();
-            boolean isOne = (b&(1 << selector)) != 0;
-            selector--;
-
-            if (isOne) {
-                bytes[i] = (byte) (next | 1);
-            } else {
-                bytes[i] = (byte) (next & ~1);
-            }
+            next = (byte) (next & ~1); // borra bit menos significativo de next
+            next |= (b & (1 << i)) >> i; // selecciona un bit en b, lo ubica en el menos significativo de next
+            bytes[k++] = next;
         }
 
         return bytes;
