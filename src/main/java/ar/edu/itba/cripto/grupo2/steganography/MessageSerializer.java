@@ -59,7 +59,7 @@ public class MessageSerializer {
         return new Message(extension, payload);
     }
 
-    private static int getEncodingSize(ByteBuffer picBuffer, SteganographyStrategy strategy) { // Consume el buffer!
+    public static int getEncodingSize(ByteBuffer picBuffer, SteganographyStrategy strategy) { // Consume el buffer!
         ByteBuffer buf = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
 
         for (int i = 0; i < 4 ; i++) {
@@ -67,7 +67,8 @@ public class MessageSerializer {
         }
 
         buf.flip();
-        return buf.getInt();
+        int tor = buf.getInt();
+        return tor;
     }
 
 
