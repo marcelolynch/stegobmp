@@ -27,7 +27,7 @@ public class EncryptionSettings {
     }
 
     public String getCode(){
-       return String.format("%s/%s/%s", cipherType.getCode(), cipherMode.getCode(), padding.getCode());
+       return String.format("%s/%s/%s", cipherType.getShortCode(), cipherMode.getCode(), padding.getCode());
     }
 
     public CipherType getCipherType() {
