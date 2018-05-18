@@ -5,7 +5,7 @@ public enum CipherType {
     AES_128 ("AES128", 16),
     AES_192 ("AES192", 24),
     AES_256 ("AES256", 32),
-    DES     ("DES", 7);
+    DES     ("DES", 8);
 
     private final String code;
     private final int keyLenght; //En bytes

@@ -18,13 +18,34 @@ import java.security.NoSuchAlgorithmException;
 public class CipherTest {
 
     @Test
-    public void cipherTest() throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException {
+    public void DesECBTest() throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException {
         String password = "password";
-        EncryptionSettings settings = new EncryptionSettings(CipherType.AES_192, CipherMode.ECB);
+        EncryptionSettings settings = new EncryptionSettings(CipherType.DES, CipherMode.ECB);
         MessageCipher c = new MessageCipher();
         String message = "mensaje a encriptar";
         byte[] cipherText = c.cipher(message.getBytes(),password,settings);
         System.out.println(cipherText);
+
+
+    }
+
+    @Test
+    public void AesCBCTest() throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException {
+        String password = "password";
+        EncryptionSettings settings1 = new EncryptionSettings(CipherType.AES_128, CipherMode.CBC);
+        EncryptionSettings settings2 = new EncryptionSettings(CipherType.AES_192, CipherMode.CBC);
+        EncryptionSettings settings3 = new EncryptionSettings(CipherType.AES_256, CipherMode.CBC);
+
+        MessageCipher c = new MessageCipher();
+        String message = "mensaje a encriptar";
+        byte[] cipherText1 = c.cipher(message.getBytes(),password,settings1);
+        byte[] cipherText2 = c.cipher(message.getBytes(),password,settings2);
+        byte[] cipherText3 = c.cipher(message.getBytes(),password,settings3);
+        System.out.println(cipherText1);
+        System.out.println(cipherText2);
+        System.out.println(cipherText3);
+
+        System.out.println(c.descipher(cipherText1,password,settings1));
 
 
     }

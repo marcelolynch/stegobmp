@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.util.Arrays;
 
 public class MessageCipher {
@@ -14,6 +15,9 @@ public class MessageCipher {
     private static String HASH_ALGORITHM = "MD5";
 
     public byte[] cipher(byte[] message, String password, EncryptionSettings settings) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {
+
+        //ESTO PONERLO EN EL MAIN!!!
+        Security.setProperty("crypto.policy", "unlimited");
 
         byte[] key = password.getBytes();
         MessageDigest md5 = MessageDigest.getInstance(HASH_ALGORITHM);
@@ -31,5 +35,6 @@ public class MessageCipher {
         return cipherText;
 
     }
+    
 
 }
