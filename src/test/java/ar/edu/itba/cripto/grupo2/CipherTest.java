@@ -45,9 +45,6 @@ public class CipherTest {
         System.out.println(cipherText2);
         System.out.println(cipherText3);
 
-        System.out.println(c.descipher(cipherText1,password,settings1));
-
-
     }
 
 }
