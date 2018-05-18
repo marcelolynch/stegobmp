@@ -32,6 +32,7 @@ public class CryptoSteganographer implements Steganographer {
             this.decryptionCipher = Cipher.getInstance(settings.getCode());
             this.decryptionCipher.init(Cipher.DECRYPT_MODE, key, ivspec);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new IllegalArgumentException("Incorrect settings");
         }
 

@@ -79,7 +79,6 @@ public class CryptoSteganographerTest {
 
     @Test
     public void cryptoStegoWriteTest() throws IOException {
-
         byte[] file = IOUtils.toByteArray(new FileInputStream("resources/test/4x4.bmp"));
         Bitmap bmp = new Bitmap(file);
 

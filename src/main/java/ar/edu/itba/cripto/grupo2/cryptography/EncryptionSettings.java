@@ -1,9 +1,8 @@
 package ar.edu.itba.cripto.grupo2.cryptography;
 
-
 import sun.security.provider.MD5;
-
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.spec.KeySpec;
