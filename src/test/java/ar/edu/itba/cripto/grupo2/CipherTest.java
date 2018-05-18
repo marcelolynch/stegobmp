@@ -21,7 +21,7 @@ public class CipherTest {
     public void DesECBTest() throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException {
         String password = "password";
         EncryptionSettings settings = new EncryptionSettings(CipherType.DES, CipherMode.ECB);
-        MessageCipher c = new MessageCipher();
+        MessageCipher c = MessageCipher.getInstance();
         String message = "mensaje a encriptar";
         byte[] cipherText = c.cipher(message.getBytes(),password,settings);
         System.out.println(cipherText);
@@ -36,7 +36,7 @@ public class CipherTest {
         EncryptionSettings settings2 = new EncryptionSettings(CipherType.AES_192, CipherMode.CBC);
         EncryptionSettings settings3 = new EncryptionSettings(CipherType.AES_256, CipherMode.CBC);
 
-        MessageCipher c = new MessageCipher();
+        MessageCipher c = MessageCipher.getInstance();
         String message = "mensaje a encriptar";
         byte[] cipherText1 = c.cipher(message.getBytes(),password,settings1);
         byte[] cipherText2 = c.cipher(message.getBytes(),password,settings2);

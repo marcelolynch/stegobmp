@@ -10,13 +10,29 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.util.Arrays;
 
+
 public class MessageCipher {
+
+    //Lo hacemos singleton?
+    private static MessageCipher mc = new MessageCipher();
+
+    private MessageCipher() {
+        //TODO: ESTO PONERLO EN EL MAIN!!!
+        Security.setProperty("crypto.policy", "unlimited");
+    }
+
+    public static MessageCipher getInstance(){
+        if(mc == null){
+            mc = new MessageCipher();
+        }
+        return mc;
+    }
 
     private static String HASH_ALGORITHM = "MD5";
 
     public byte[] cipher(byte[] message, String password, EncryptionSettings settings) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {
 
-        //ESTO PONERLO EN EL MAIN!!!
+        //TODO: ESTO PONERLO EN EL MAIN!!!
         Security.setProperty("crypto.policy", "unlimited");
 
         byte[] key = password.getBytes();
