@@ -32,7 +32,6 @@ public class CryptoSteganographer implements Steganographer {
             this.decryptionCipher = Cipher.getInstance(settings.getCode());
             this.decryptionCipher.init(Cipher.DECRYPT_MODE, key, ivspec);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new IllegalArgumentException("Incorrect settings");
         }
 
@@ -41,7 +40,9 @@ public class CryptoSteganographer implements Steganographer {
 
     @Override
     public boolean canWrite(Bitmap bitmap, Message message) {
-        return false;
+        final int writable = bitmap.getImageByteSize();
+        final int blockSize = encryptionCipher.getBlockSize();
+        return settings.getPadding().encryptionSize(writable, blockSize) >= message.getPayload().length;
     }
 
     @Override

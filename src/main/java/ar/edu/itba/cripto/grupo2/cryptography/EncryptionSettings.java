@@ -1,14 +1,17 @@
 package ar.edu.itba.cripto.grupo2.cryptography;
 
-import sun.security.provider.MD5;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-import java.security.Key;
-import java.security.MessageDigest;
-import java.security.spec.KeySpec;
+import java.security.Security;
 import java.util.Objects;
+import java.util.Optional;
 
 public class EncryptionSettings {
+
+    static {
+        //TODO: Esto ponerlo en el main
+        Security.setProperty("crypto.policy", "unlimited");
+    }
 
     private final CipherType cipherType;
     private final CipherMode cipherMode;
@@ -32,7 +35,7 @@ public class EncryptionSettings {
     }
 
     public String getCode(){
-       return String.format("%s/%s/%s", cipherType.getShortCode(), cipherMode.getCode(), padding.getCode());
+       return String.format("%s/%s/%s", cipherType.getCode(), cipherMode.getCode(), padding.getCode());
     }
 
     public CipherType getCipherType() {

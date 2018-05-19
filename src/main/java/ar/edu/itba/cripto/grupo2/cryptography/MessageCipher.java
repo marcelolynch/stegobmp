@@ -16,11 +16,6 @@ public class MessageCipher {
     //Lo hacemos singleton?
     private static MessageCipher mc = new MessageCipher();
 
-    private MessageCipher() {
-        //TODO: ESTO PONERLO EN EL MAIN!!!
-        Security.setProperty("crypto.policy", "unlimited");
-    }
-
     public static MessageCipher getInstance(){
         if(mc == null){
             mc = new MessageCipher();
@@ -32,16 +27,13 @@ public class MessageCipher {
 
     public byte[] cipher(byte[] message, String password, EncryptionSettings settings) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {
 
-        //TODO: ESTO PONERLO EN EL MAIN!!!
-        Security.setProperty("crypto.policy", "unlimited");
-
         byte[] key = password.getBytes();
         MessageDigest md5 = MessageDigest.getInstance(HASH_ALGORITHM);
         key = md5.digest(key);
 
-        key = Arrays.copyOf(key, settings.getCipherType().getKeyLenght());
+        key = Arrays.copyOf(key, settings.getCipherType().getKeyLength());
 
-        SecretKeySpec secretKey = new SecretKeySpec(key, settings.getCipherType().getShortCode());
+        SecretKeySpec secretKey = new SecretKeySpec(key, settings.getCipherType().getCode());
         Cipher c = Cipher.getInstance(settings.getCode());
 
         c.init(Cipher.ENCRYPT_MODE, secretKey);
@@ -51,6 +43,6 @@ public class MessageCipher {
         return cipherText;
 
     }
-    
+
 
 }
