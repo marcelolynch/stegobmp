@@ -5,6 +5,8 @@ import ar.edu.itba.cripto.grupo2.cryptography.CipherType;
 import ar.edu.itba.cripto.grupo2.cryptography.EncryptionSettings;
 import org.junit.Test;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
@@ -48,4 +50,25 @@ public class EncryptionSettingsTest {
         assertEquals(24, settings.getKey().getEncoded().length);
 
     }
+
+    @Test
+    public void passwordTest() throws Exception {
+        String password = "margarita";
+        EncryptionSettings settings = new EncryptionSettings(CipherType.AES_256, CipherMode.CBC, password);
+
+        SecretKey key = settings.getKey();
+        IvParameterSpec iv = settings.getIv();
+
+        byte[] keyBytes = key.getEncoded();
+        byte[] ivBytes = iv.getIV();
+        for(byte b: keyBytes){
+            System.out.printf("%02X ", b);
+        }
+        System.out.println();
+        for(byte b: ivBytes){
+            System.out.printf("%02X ", b);
+        }
+
+    }
+
 }

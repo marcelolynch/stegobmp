@@ -32,10 +32,10 @@ public class CryptoSteganographerTest {
         byte[] encKey =  {0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01};
         SecretKey desKey = new SecretKeySpec(encKey, CipherType.DES.getCode());
 
-        byte[] iv = { 0, 0, 0, 0, 0, 0, 0, 0 };
+        byte[] iv = { 0, 0, 0, 0, 0, 0, 0, 0};
         IvParameterSpec ivspec = new IvParameterSpec(iv);
 
-        EncryptionSettings settings = new EncryptionSettings(CipherType.DES, CipherMode.CBC, desKey);
+        EncryptionSettings settings = new EncryptionSettings(CipherType.DES, CipherMode.CBC, desKey, ivspec);
 
         Cipher cipher = Cipher.getInstance(settings.getCode());
         cipher.init(Cipher.ENCRYPT_MODE, desKey, ivspec);
@@ -72,8 +72,10 @@ public class CryptoSteganographerTest {
     @Before
     public void init(){
         byte[] encKey =  {0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01};
+        byte[] iv =  {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
         SecretKey desKey = new SecretKeySpec(encKey, CipherType.DES.getCode());
-        EncryptionSettings settings = new EncryptionSettings(CipherType.DES, CipherMode.CBC, desKey);
+        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+        EncryptionSettings settings = new EncryptionSettings(CipherType.DES, CipherMode.CBC, desKey, ivSpec);
         cs = new CryptoSteganographer(new LSB4(), settings);
     }
 

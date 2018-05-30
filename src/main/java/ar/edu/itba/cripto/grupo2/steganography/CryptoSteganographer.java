@@ -21,9 +21,7 @@ public class CryptoSteganographer implements Steganographer {
     public CryptoSteganographer(SteganographyStrategy strategy, EncryptionSettings settings){
         this.settings = settings;
         SecretKey key = settings.getKey();
-
-        byte[] iv = { 0, 0, 0, 0, 0, 0, 0, 0 }; // Asumimos blocksize de 8 TODO: Esto bien
-        IvParameterSpec ivspec = new IvParameterSpec(iv);
+        IvParameterSpec ivspec = settings.getIv();
 
         try {
             this.encryptionCipher = Cipher.getInstance(settings.getCode());

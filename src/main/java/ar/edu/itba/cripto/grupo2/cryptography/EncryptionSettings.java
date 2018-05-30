@@ -18,36 +18,63 @@ public class EncryptionSettings {
         Security.setProperty("crypto.policy", "unlimited");
     }
 
-    private static String HASH_ALGORITHM = "MD5";
+    private static String HASH_ALGORITHM = "SHA-256";
     private CipherType cipherType;
     private CipherMode cipherMode;
     private CipherPadding padding;
     private SecretKey key;
+    private IvParameterSpec iv;
 
-    public EncryptionSettings(CipherType cipherType, CipherMode cipherMode, SecretKey secretKey) {
-        this(cipherType, cipherMode, secretKey, CipherPadding.PKCS5);
+    public EncryptionSettings(CipherType cipherType, CipherMode cipherMode, SecretKey secretKey, IvParameterSpec iv) {
+        this(cipherType, cipherMode, secretKey, iv, CipherPadding.PKCS5);
     }
 
-    public EncryptionSettings(CipherType cipherType, CipherMode cipherMode, SecretKey key, CipherPadding padding) {
+    public EncryptionSettings(CipherType cipherType, CipherMode cipherMode, SecretKey key, IvParameterSpec iv, CipherPadding padding) {
         this.setType(cipherType);
         this.setMode(cipherMode);
         this.setPadding(padding);
         this.setKey(key);
+        this.setIv(iv);
     }
+
 
     public EncryptionSettings(CipherType cipherType, CipherMode cipherMode, String password) throws NoSuchAlgorithmException {
         this.setType(cipherType);
         this.setMode(cipherMode);
         this.setPadding(CipherPadding.PKCS5);
-        this.setKey(generateKey(password));
+        generateKeyAndIv(password);
     }
 
-    private SecretKey generateKey(String password) throws NoSuchAlgorithmException {
-        byte[] key = password.getBytes();
-        MessageDigest md5 = MessageDigest.getInstance(HASH_ALGORITHM);
-        key = md5.digest(key);
-        key = Arrays.copyOf(key, getCipherType().getKeyLength());
-        return new SecretKeySpec(key,getCipherType().getCode());
+    private void generateKeyAndIv(String password) throws NoSuchAlgorithmException {
+        int keyLength = cipherType.getKeyLength();
+        int ivLength = 8; // 8 block byte
+        byte[] data = password.getBytes();
+
+        MessageDigest digestor = MessageDigest.getInstance(HASH_ALGORITHM);
+
+        int requiredLength = keyLength + ivLength;
+        int iterations = (requiredLength / digestor.getDigestLength()) + 1; // Por ahi se pasa una pero no hay problema
+
+        byte[] keyData = new byte[iterations * digestor.getDigestLength()];
+
+        byte[] prev = {};
+        int offset = 0;
+        for(int i = 0 ; i < iterations ; i++){
+            byte[] hashable = new byte[prev.length + data.length];
+            // Concatenate D_(n-1) || data  -- (no salt)
+            System.arraycopy(prev, 0, hashable, 0, prev.length);
+            System.arraycopy(data, 0, hashable, prev.length, data.length);
+
+            prev = digestor.digest(hashable); // D_n
+            System.arraycopy(prev, 0, keyData, offset, prev.length);
+            offset += prev.length;
+        }
+
+        byte[] key = Arrays.copyOfRange(keyData,0, keyLength);
+        byte[] iv = Arrays.copyOfRange(keyData, keyLength, requiredLength);
+
+        setKey(new SecretKeySpec(key, this.cipherType.getCode()));
+        setIv(new IvParameterSpec(iv));
     }
 
     public String getCode(){
@@ -70,9 +97,19 @@ public class EncryptionSettings {
         return key;
     }
 
+    public IvParameterSpec getIv() {
+        return iv;
+    }
+
     private void setType(CipherType cipherType){
         Objects.requireNonNull(cipherType);
         this.cipherType = cipherType;
+    }
+
+
+    private void setIv(IvParameterSpec iv) {
+        Objects.requireNonNull(iv);
+        this.iv = iv;
     }
 
     private void setMode(CipherMode cipherMode){
