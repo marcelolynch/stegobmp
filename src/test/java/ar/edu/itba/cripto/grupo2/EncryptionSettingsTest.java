@@ -22,7 +22,6 @@ public class EncryptionSettingsTest {
         String password = "PASSWORDDES";
         EncryptionSettings settings = new EncryptionSettings(CipherType.DES, CipherMode.ECB, password);
         assertEquals(8, settings.getKey().getEncoded().length);
-        assertEquals("AD9B06C24AEFA3DB", decodePassword(settings.getKey().getEncoded()));
     }
 
 
@@ -31,7 +30,6 @@ public class EncryptionSettingsTest {
         String password = "PASSWORDAES128";
         EncryptionSettings settings = new EncryptionSettings(CipherType.AES_128, CipherMode.ECB, password);
         assertEquals(16, settings.getKey().getEncoded().length);
-        assertEquals("f6b50eb662d4ffd07f0870e82fdf1b09".toUpperCase(), decodePassword(settings.getKey().getEncoded()));
     }
 
     @Test
@@ -39,7 +37,6 @@ public class EncryptionSettingsTest {
         String password = "PASSWORDAES256";
         EncryptionSettings settings = new EncryptionSettings(CipherType.AES_256, CipherMode.ECB, password);
         assertEquals(32, settings.getKey().getEncoded().length);
-        assertEquals("d887b32f8c4bb2fd3ac48492b6f5264a00000000000000000000000000000000".toUpperCase(), decodePassword(settings.getKey().getEncoded()));
     }
 
     @Test
@@ -47,7 +44,6 @@ public class EncryptionSettingsTest {
         String password = "PASSWORDAES192";
         EncryptionSettings settings = new EncryptionSettings(CipherType.AES_192, CipherMode.ECB, password);
         assertEquals(24, settings.getKey().getEncoded().length);
-        assertEquals("ea5d00b910ea6f95cf7875d1d99366620000000000000000".toUpperCase(), decodePassword(settings.getKey().getEncoded()));
     }
 
     public String decodePassword(byte[] key) {
