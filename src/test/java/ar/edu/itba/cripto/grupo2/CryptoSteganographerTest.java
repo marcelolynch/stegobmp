@@ -72,7 +72,7 @@ public class CryptoSteganographerTest {
     @Before
     public void init(){
         byte[] encKey =  {0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01};
-        byte[] iv =  {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
+        byte[] iv =  {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
         SecretKey desKey = new SecretKeySpec(encKey, CipherType.DES.getCode());
         IvParameterSpec ivSpec = new IvParameterSpec(iv);
         EncryptionSettings settings = new EncryptionSettings(CipherType.DES, CipherMode.CBC, desKey, ivSpec);
