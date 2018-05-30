@@ -21,15 +21,16 @@ public class CryptoSteganographer implements Steganographer {
     public CryptoSteganographer(SteganographyStrategy strategy, EncryptionSettings settings){
         this.settings = settings;
         SecretKey key = settings.getKey();
-        IvParameterSpec ivspec = settings.getIv();
+        IvParameterSpec ivSpec = settings.getIv();
 
         try {
             this.encryptionCipher = Cipher.getInstance(settings.getCode());
-            this.encryptionCipher.init(Cipher.ENCRYPT_MODE, key, ivspec);
+            this.encryptionCipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
 
             this.decryptionCipher = Cipher.getInstance(settings.getCode());
-            this.decryptionCipher.init(Cipher.DECRYPT_MODE, key, ivspec);
+            this.decryptionCipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new IllegalArgumentException("Incorrect settings");
         }
 

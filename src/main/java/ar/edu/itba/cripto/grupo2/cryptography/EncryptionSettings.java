@@ -45,20 +45,24 @@ public class EncryptionSettings {
         generateKeyAndIv(password);
     }
 
+
     private void generateKeyAndIv(String password) throws NoSuchAlgorithmException {
+        // Implementacion de EVP_BytesToKey: https://www.openssl.org/docs/man1.1.0/crypto/EVP_BytesToKey.html
+
         int keyLength = cipherType.getKeyLength();
-        int ivLength = 8; // 8 block byte
+        int ivLength = cipherType.getBlockSize();
         byte[] data = password.getBytes();
 
         MessageDigest digestor = MessageDigest.getInstance(HASH_ALGORITHM);
 
         int requiredLength = keyLength + ivLength;
-        int iterations = (requiredLength / digestor.getDigestLength()) + 1; // Por ahi se pasa una pero no hay problema
 
+        // Me aseguro de generar suficientes bytes
+        int iterations = (requiredLength / digestor.getDigestLength()) + (requiredLength % digestor.getDigestLength() == 0 ? 0 : 1);
         byte[] keyData = new byte[iterations * digestor.getDigestLength()];
 
-        byte[] prev = {};
-        int offset = 0;
+        byte[] prev = {}; // D_i
+        int offset = 0;   //
         for(int i = 0 ; i < iterations ; i++){
             byte[] hashable = new byte[prev.length + data.length];
             // Concatenate D_(n-1) || data  -- (no salt)

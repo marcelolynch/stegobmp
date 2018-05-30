@@ -48,7 +48,6 @@ public class EncryptionSettingsTest {
         EncryptionSettings settings = new EncryptionSettings(CipherType.AES_192, CipherMode.ECB, password);
         assertEquals(24, settings.getKey().getEncoded().length);
         assertEquals("ea5d00b910ea6f95cf7875d1d99366620000000000000000".toUpperCase(), decodePassword(settings.getKey().getEncoded()));
-
     }
 
     public String decodePassword(byte[] key) {
@@ -67,15 +66,11 @@ public class EncryptionSettingsTest {
         SecretKey key = settings.getKey();
         IvParameterSpec iv = settings.getIv();
 
-        byte[] keyBytes = key.getEncoded();
-        byte[] ivBytes = iv.getIV();
-        for(byte b: keyBytes){
-            System.out.printf("%02X ", b);
-        }
-        System.out.println();
-        for(byte b: ivBytes){
-            System.out.printf("%02X ", b);
-        }
+        String expectedKey = "F1BE6354B41828A0B8AA1201094A15CC00ADD2A52D5BDE5B582A1576FDFDFBD4";
+        String expectedIv = "66ED36D9005C1D4F5A1C4055E7B14283";
+
+        assertEquals(expectedKey, decodePassword(key.getEncoded()));
+        assertEquals(expectedIv, decodePassword(iv.getIV()));
 
     }
 
