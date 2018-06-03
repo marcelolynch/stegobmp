@@ -9,6 +9,18 @@ public class LSB4 implements SteganographyStrategy {
     private static final int FIRST_FOUR_BITS_MASK = 0xF0;
     private static final int BYTE_MASK = 0xFF;
 
+
+    private static LSB4 instance;
+
+    public static LSB4 getInstance(){
+        if(instance == null)
+            instance = new LSB4();
+        return instance;
+    }
+
+    private LSB4(){};
+
+
     @Override
     public byte[] nextEncodedBytes(byte b, ByteBuffer buffer) {
         int targetByte = b & BYTE_MASK; // Las mascaras funcionan en int
@@ -21,8 +33,8 @@ public class LSB4 implements SteganographyStrategy {
 
         next = buffer.get() & BYTE_MASK;
         selected = targetByte & LAST_FOUR_BITS_MASK;
-        int cleared = next & ~LAST_FOUR_BITS_MASK;
-        bytes[1] = (byte) (cleared | selected);
+        masked = next & ~LAST_FOUR_BITS_MASK;
+        bytes[1] = (byte) (masked | selected);
 
         return bytes;
     }

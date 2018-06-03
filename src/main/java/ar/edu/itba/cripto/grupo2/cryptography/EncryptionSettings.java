@@ -1,6 +1,5 @@
 package ar.edu.itba.cripto.grupo2.cryptography;
 
-import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -9,7 +8,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 
 public class EncryptionSettings {
 
@@ -18,42 +16,40 @@ public class EncryptionSettings {
         Security.setProperty("crypto.policy", "unlimited");
     }
 
-    private static String HASH_ALGORITHM = "SHA-256";
     private CipherType cipherType;
     private CipherMode cipherMode;
-    private CipherPadding padding;
     private SecretKey key;
     private IvParameterSpec iv;
 
-    public EncryptionSettings(CipherType cipherType, CipherMode cipherMode, SecretKey secretKey, IvParameterSpec iv) {
-        this(cipherType, cipherMode, secretKey, iv, CipherPadding.PKCS5);
-    }
 
-    public EncryptionSettings(CipherType cipherType, CipherMode cipherMode, SecretKey key, IvParameterSpec iv, CipherPadding padding) {
+    public EncryptionSettings(CipherType cipherType, CipherMode cipherMode, SecretKey key, IvParameterSpec iv) {
         this.setType(cipherType);
         this.setMode(cipherMode);
-        this.setPadding(padding);
         this.setKey(key);
         this.setIv(iv);
     }
 
 
-    public EncryptionSettings(CipherType cipherType, CipherMode cipherMode, String password) throws NoSuchAlgorithmException {
+    public EncryptionSettings(CipherType cipherType, CipherMode cipherMode, String password) {
         this.setType(cipherType);
         this.setMode(cipherMode);
-        this.setPadding(CipherPadding.PKCS5);
         generateKeyAndIv(password);
     }
 
 
-    private void generateKeyAndIv(String password) throws NoSuchAlgorithmException {
+    private void generateKeyAndIv(String password) {
         // Implementacion de EVP_BytesToKey: https://www.openssl.org/docs/man1.1.0/crypto/EVP_BytesToKey.html
 
         int keyLength = cipherType.getKeyLength();
         int ivLength = cipherType.getBlockSize();
         byte[] data = password.getBytes();
 
-        MessageDigest digestor = MessageDigest.getInstance(HASH_ALGORITHM);
+        MessageDigest digestor = null;
+
+        try {
+            final String HASH_ALGORITHM = "SHA-256";
+            digestor = MessageDigest.getInstance(HASH_ALGORITHM);
+        } catch (NoSuchAlgorithmException ignored) {}
 
         int requiredLength = keyLength + ivLength;
 
@@ -65,7 +61,8 @@ public class EncryptionSettings {
         int offset = 0;   //
         for(int i = 0 ; i < iterations ; i++){
             byte[] hashable = new byte[prev.length + data.length];
-            // Concatenate D_(n-1) || data  -- (no salt)
+            // Concatenate D_(n-1) || data
+            // (No salt)
             System.arraycopy(prev, 0, hashable, 0, prev.length);
             System.arraycopy(data, 0, hashable, prev.length, data.length);
 
@@ -82,7 +79,7 @@ public class EncryptionSettings {
     }
 
     public String getCode(){
-       return String.format("%s/%s/%s", cipherType.getCode(), cipherMode.getCode(), padding.getCode());
+       return String.format("%s/%s/%s", cipherType.getCode(), cipherMode.getCode(), cipherMode.getPadding().getCode());
     }
 
     public CipherType getCipherType() {
@@ -94,7 +91,7 @@ public class EncryptionSettings {
     }
 
     public CipherPadding getPadding() {
-        return padding;
+        return cipherMode.getPadding();
     }
 
     public SecretKey getKey() {
@@ -121,13 +118,27 @@ public class EncryptionSettings {
         this.cipherMode = cipherMode;
     }
 
-    private void setPadding(CipherPadding cipherPadding){
-        Objects.requireNonNull(cipherPadding);
-        this.padding = cipherPadding;
-    }
 
     private void setKey(SecretKey key){
         Objects.requireNonNull(key);
         this.key = key;
+    }
+
+
+    private String decodePassword(byte[] key) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : key) {
+            sb.append(String.format("%02X", b));
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String toString(){
+        return "{\nKey = " +
+                decodePassword(key.getEncoded()) +
+                "\n IV = " +
+                decodePassword(iv.getIV()) +
+                "\n}";
     }
 }

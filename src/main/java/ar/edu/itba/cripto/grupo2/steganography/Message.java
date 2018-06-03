@@ -4,7 +4,7 @@ public class Message {
     private String extension;
     private byte[] payload;
 
-    public Message(String extension, byte[] payload) {
+    public Message(byte[] payload, String extension) {
         this.extension = extension;
         this.payload = payload;
     }

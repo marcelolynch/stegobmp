@@ -1,5 +1,9 @@
 package ar.edu.itba.cripto.grupo2.bitmap;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 
 import static ar.edu.itba.cripto.grupo2.bitmap.BitmapFileHeader.FILE_HEADER_SIZE;
@@ -14,6 +18,11 @@ public class Bitmap {
     public static final int HEADER_SIZE = FILE_HEADER_SIZE + INFO_HEADER_SIZE;
     public static final int BYTES_PER_PIXEL = 3;
     private static final int COMPRESSION_BI_RGB = 0x0000; // Creo que no amerita un enum
+
+    public static Bitmap fromFile(String path) throws IOException {
+        byte[] picture = IOUtils.toByteArray(new FileInputStream(path));
+        return new Bitmap(picture);
+    }
 
     public Bitmap(byte[] imageBytes) {
         this.fileHeader = new BitmapFileHeader(Arrays.copyOfRange(imageBytes, 0, FILE_HEADER_SIZE));

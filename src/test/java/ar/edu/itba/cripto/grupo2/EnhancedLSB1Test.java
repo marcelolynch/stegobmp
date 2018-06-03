@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 
 public class EnhancedLSB1Test {
 
-    private EnhancedLSB1 elsb1 = new EnhancedLSB1();
+    private EnhancedLSB1 elsb1 = EnhancedLSB1.getInstance();
 
     @Test
     public void elsb1Test() {

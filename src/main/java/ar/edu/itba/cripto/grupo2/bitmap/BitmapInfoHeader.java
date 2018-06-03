@@ -1,8 +1,5 @@
 package ar.edu.itba.cripto.grupo2.bitmap;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 

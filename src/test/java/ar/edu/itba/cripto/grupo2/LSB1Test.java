@@ -13,7 +13,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class LSB1Test {
-    private LSB1 lsb1 = new LSB1();
+    private LSB1 lsb1 = LSB1.getInstance();
 
 
     @Test

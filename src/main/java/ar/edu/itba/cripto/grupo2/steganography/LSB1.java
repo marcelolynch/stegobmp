@@ -1,13 +1,21 @@
 package ar.edu.itba.cripto.grupo2.steganography;
 
-import ar.edu.itba.cripto.grupo2.bitmap.Bitmap;
-
 import java.nio.ByteBuffer;
 
 public class LSB1 implements SteganographyStrategy {
 
     private static final int WRITTEN_BYTES_PER_BYTE = 8;
     private static final int LAST_BYTE_MASK = 1;
+
+    private static LSB1 instance;
+
+    public static LSB1 getInstance(){
+        if(instance == null)
+            instance = new LSB1();
+        return instance;
+    }
+
+    private LSB1(){};
 
     @Override
     public byte[] nextEncodedBytes(byte b, ByteBuffer buffer) {

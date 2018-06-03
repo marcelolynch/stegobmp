@@ -10,15 +10,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.security.NoSuchAlgorithmException;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -27,7 +24,7 @@ public class CryptoSteganographerTest {
 
     private CryptoSteganographer cs;
 
-    public void encryptionHelper() throws Exception {
+    public void encryptionHelper() throws Exception { // TODO: Borrar
 
         byte[] encKey =  {0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01};
         SecretKey desKey = new SecretKeySpec(encKey, CipherType.DES.getCode());
@@ -76,7 +73,7 @@ public class CryptoSteganographerTest {
         SecretKey desKey = new SecretKeySpec(encKey, CipherType.DES.getCode());
         IvParameterSpec ivSpec = new IvParameterSpec(iv);
         EncryptionSettings settings = new EncryptionSettings(CipherType.DES, CipherMode.CBC, desKey, ivSpec);
-        cs = new CryptoSteganographer(new LSB4(), settings);
+        cs = new CryptoSteganographer(LSB4.getInstance(), settings);
     }
 
     @Test
@@ -85,7 +82,7 @@ public class CryptoSteganographerTest {
         Bitmap bmp = new Bitmap(file);
 
         byte[] payload = "hola".getBytes();   // 0x68 0x6F 0x6C 0x61
-        Message msg = new Message(".txt", payload); // 0x2E 0x74 0x78 0x74
+        Message msg = new Message(payload, ".txt"); // 0x2E 0x74 0x78 0x74
 
         ByteBuffer bb = MessageSerializer.serialize(msg);
         cs.write(bmp, msg);
@@ -112,6 +109,71 @@ public class CryptoSteganographerTest {
         assertArrayEquals("hola".getBytes(), message.getPayload());
         assertEquals(".txt", message.getExtension());
     }
+
+
+    @Test
+    public void ladoLSB4aes256cbc_ReadTest() throws IOException {
+        Bitmap bmp = Bitmap.fromFile("resources/test/ladoLSB4aes256cbc.bmp");
+        byte[] expected = IOUtils.toByteArray(new FileInputStream("resources/test/doc.pdf"));
+
+        EncryptionSettings es = new EncryptionSettings(CipherType.AES_256, CipherMode.CBC,"secreto");
+        Steganographer s = new CryptoSteganographer(LSB4.getInstance(), es);
+
+        Message message = s.read(bmp);
+
+        assertArrayEquals(expected, message.getPayload());
+        assertEquals(".pdf", message.getExtension());
+    }
+
+
+    @Test
+    public void ladoLSB4aes256cbc_WriteTest() throws IOException {
+        Bitmap bmp = Bitmap.fromFile("resources/test/lado.bmp");
+        byte[] payload = IOUtils.toByteArray(new FileInputStream("resources/test/doc.pdf"));
+        EncryptionSettings es = new EncryptionSettings(CipherType.AES_256, CipherMode.CBC,"secreto");
+        Steganographer s = new CryptoSteganographer(LSB4.getInstance(), es);
+
+        Message message = new Message(payload, ".pdf");
+
+        s.write(bmp, message);
+
+        byte[] expected = IOUtils.toByteArray(new FileInputStream("resources/test/ladoLSB4aes256cbc.bmp"));
+        assertArrayEquals(expected, bmp.getBytes());
+    }
+
+
+
+    @Test
+    public void ladoLSB4aes256ofb_ReadTest() throws IOException {
+        Bitmap bmp = Bitmap.fromFile("resources/test/ladoLSB4aes256ofb.bmp");
+        byte[] expected = IOUtils.toByteArray(new FileInputStream("resources/test/doc.pdf"));
+
+        EncryptionSettings es = new EncryptionSettings(CipherType.AES_256, CipherMode.OFB,"secreto");
+        Steganographer s = new CryptoSteganographer(LSB4.getInstance(), es);
+
+        Message message = s.read(bmp);
+
+        assertArrayEquals(expected, message.getPayload());
+        assertEquals(".pdf", message.getExtension());
+    }
+
+
+    @Test
+    public void ladoLSB4aes256ofb_WriteTest() throws IOException {
+        Bitmap bmp = Bitmap.fromFile("resources/test/lado.bmp");
+        byte[] payload = IOUtils.toByteArray(new FileInputStream("resources/test/doc.pdf"));
+        EncryptionSettings es = new EncryptionSettings(CipherType.AES_256, CipherMode.OFB,"secreto");
+        Steganographer s = new CryptoSteganographer(LSB4.getInstance(), es);
+        Message message = new Message(payload, ".pdf");
+
+        s.write(bmp, message);
+
+        byte[] expected = IOUtils.toByteArray(new FileInputStream("resources/test/ladoLSB4aes256ofb.bmp"));
+        assertArrayEquals(expected, bmp.getBytes());
+    }
+
+
+
 
 
 

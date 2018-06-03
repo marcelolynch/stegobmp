@@ -9,6 +9,15 @@ public class EnhancedLSB1 implements SteganographyStrategy {
     private static final int WRITTEN_BYTES_PER_BYTE = 8;
     private static final int THRESHOLD_VALUE = 253;
 
+    private static EnhancedLSB1 instance;
+
+    public static EnhancedLSB1 getInstance(){
+        if(instance == null)
+            instance = new EnhancedLSB1();
+        return instance;
+    }
+
+    private EnhancedLSB1(){};
 
 
     @Override

@@ -11,4 +11,5 @@ public interface SteganographyStrategy {
     byte[] nextEncodedBytes(byte b, ByteBuffer buffer);
     byte nextDecodedByte(ByteBuffer buffer);
     int maximumEncodingSize(ByteBuffer b);
+
 }

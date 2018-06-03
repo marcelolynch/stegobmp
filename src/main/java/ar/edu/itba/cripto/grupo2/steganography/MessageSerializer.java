@@ -3,8 +3,6 @@ package ar.edu.itba.cripto.grupo2.steganography;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.function.BiFunction;
-import java.util.function.ToIntFunction;
 
 public class MessageSerializer {
     private static final int FILE_SIZE_HEADER_BYTES = 4;
@@ -33,7 +31,6 @@ public class MessageSerializer {
         }
 
         int length = getEncodingSize(buffer, strategy);
-
         if(!strategy.canHold(buffer, length)){
             throw new IllegalArgumentException();
         }
@@ -56,7 +53,7 @@ public class MessageSerializer {
         }
 
         String extension = new String(extensionBytes.toByteArray());
-        return new Message(extension, payload);
+        return new Message(payload, extension);
     }
 
     public static int getEncodingSize(ByteBuffer picBuffer, SteganographyStrategy strategy) { // Consume el buffer!
@@ -67,8 +64,7 @@ public class MessageSerializer {
         }
 
         buf.flip();
-        int tor = buf.getInt();
-        return tor;
+        return buf.getInt();
     }
 
 

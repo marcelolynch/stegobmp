@@ -8,6 +8,13 @@ public enum CipherPadding {
         public int encryptionSize(int messageSize, int blockSize) {
             return (messageSize/blockSize + 1) * blockSize;
         }
+    },
+
+    NO_PADDING("NoPadding") {
+        @Override
+        public int encryptionSize(int messageSize, int blockSize) {
+            return messageSize;
+        }
     };
     private String code;
 
@@ -20,4 +27,6 @@ public enum CipherPadding {
     }
 
     public abstract int encryptionSize(int messageSize, int blockSize);
+
+
 }

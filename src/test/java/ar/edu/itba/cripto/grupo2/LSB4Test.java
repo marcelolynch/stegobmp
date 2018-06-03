@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 
 public class LSB4Test {
 
-    private LSB4 lsb4 = new LSB4();
+    private LSB4 lsb4 = LSB4.getInstance();
 
     @Test
     public void lsb4Test() {

@@ -3,13 +3,14 @@ package ar.edu.itba.cripto.grupo2.steganography;
 import ar.edu.itba.cripto.grupo2.bitmap.Bitmap;
 import ar.edu.itba.cripto.grupo2.cryptography.EncryptionSettings;
 
-import javax.crypto.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 public class CryptoSteganographer implements Steganographer {
 
@@ -25,10 +26,15 @@ public class CryptoSteganographer implements Steganographer {
 
         try {
             this.encryptionCipher = Cipher.getInstance(settings.getCode());
-            this.encryptionCipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
-
             this.decryptionCipher = Cipher.getInstance(settings.getCode());
-            this.decryptionCipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
+
+            if(settings.getCipherMode().isIvRequired()){
+                this.encryptionCipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
+                this.decryptionCipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
+            } else {
+                this.encryptionCipher.init(Cipher.ENCRYPT_MODE, key);
+                this.decryptionCipher.init(Cipher.DECRYPT_MODE, key);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalArgumentException("Incorrect settings");
@@ -57,28 +63,16 @@ public class CryptoSteganographer implements Steganographer {
         // Esteganografiar el tamaño de la encripción
         byte[] encryptionSizeBytes = new byte[4];               // 4 bytes en un int
         ByteBuffer sizeBuffer = ByteBuffer.wrap(encryptionSizeBytes).order(ByteOrder.BIG_ENDIAN);
-        sizeBuffer.putInt(encryptionSize);                      // Esto modifica el arreglo size
+        sizeBuffer.putInt(encryptionSize);                      // Esto modifica el arreglo encryptionSizeBytes
 
-        int writeOffset = 0;
-        writeOffset += writeToBitmap(bitmap, writeOffset, picBuffer, encryptionSizeBytes);  // Se esteganografia y se consumen los bytes necesarios de picBuffer
+        int writeOffset = writeToBitmap(bitmap, 0, picBuffer, encryptionSizeBytes);  // Se esteganografia y se consumen los bytes necesarios de picBuffer
 
-
-        byte[] blockBuffer = new byte[blockSize];               // Para acumular bloques - podria hacerse de una vez pero
-
-        while (serialized.remaining() >= blockSize) {
-            serialized.get(blockBuffer, 0, blockSize);
-            byte[] encrypted = encryptionCipher.update(blockBuffer);
-            writeOffset += writeToBitmap(bitmap, writeOffset, picBuffer, encrypted);
-        }
-
-        byte[] lastBlock = new byte[serialized.remaining()];
-        for (int i = 0 ; serialized.hasRemaining() ; i++){
-            lastBlock[i] = serialized.get();
-        }
+        byte[] toEncrypt = new byte[serialized.remaining()];
+        serialized.get(toEncrypt, 0, serialized.remaining());
 
         try {
-            byte[] encrypted = encryptionCipher.doFinal(lastBlock);
-            writeToBitmap(bitmap, writeOffset, picBuffer, encrypted);
+            byte[] encrypted = encryptionCipher.doFinal(toEncrypt);
+            writeOffset += writeToBitmap(bitmap, writeOffset, picBuffer, encrypted);
         } catch (Exception e){
             throw new IllegalStateException();
         }
@@ -91,8 +85,8 @@ public class CryptoSteganographer implements Steganographer {
 
         for (i = 0 ; i < encrypted.length && readBuffer.hasRemaining() ; i++) {
             byte[] transformed = strategy.nextEncodedBytes(encrypted[i], readBuffer); // Consume readBuffer
-            for (int j = 0; j < transformed.length ; j++) {
-                bitmap.setByte(offset + written, transformed[j]);
+            for (byte b : transformed) {
+                bitmap.setByte(offset + written, b);
                 written++;
             }
         }
@@ -108,21 +102,23 @@ public class CryptoSteganographer implements Steganographer {
     public Message read(Bitmap bitmap) throws IllegalArgumentException {
         ByteBuffer buffer = ByteBuffer.wrap(bitmap.getImageBytes()).order(ByteOrder.BIG_ENDIAN);
         int size = MessageSerializer.getEncodingSize(buffer, strategy);
+
         if(!strategy.canHold(buffer, size)){
             throw new IllegalArgumentException();
         }
 
         ByteArrayOutputStream decryption = new ByteArrayOutputStream();
         for(int i = 0 ; i < size ; i++){
-            decryption.write(strategy.nextDecodedByte(buffer));
+            byte b = strategy.nextDecodedByte(buffer);
+            decryption.write(b);
         }
 
         try {
             byte[] serializedMessage = decryptionCipher.doFinal(decryption.toByteArray());
             ByteBuffer messageBuffer = ByteBuffer.wrap(serializedMessage).order(ByteOrder.BIG_ENDIAN);
-            return MessageSerializer.deserialize(messageBuffer, new IdentitySteganography());
-
+            return MessageSerializer.deserialize(messageBuffer, IdentitySteganography.getInstance());
         } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
             throw new IllegalStateException();
         } catch (BadPaddingException e) {
             throw new IllegalArgumentException();

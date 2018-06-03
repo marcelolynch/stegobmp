@@ -1,9 +1,7 @@
 package ar.edu.itba.cripto.grupo2;
 
 import ar.edu.itba.cripto.grupo2.bitmap.Bitmap;
-import ar.edu.itba.cripto.grupo2.steganography.LSB4;
-import ar.edu.itba.cripto.grupo2.steganography.Message;
-import ar.edu.itba.cripto.grupo2.steganography.PlaintextSteganographer;
+import ar.edu.itba.cripto.grupo2.steganography.*;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
@@ -18,14 +16,14 @@ public class PlaintextSteganographerTest {
 
     @Test
     public void ptsTest() throws IOException {
-        pts = new PlaintextSteganographer(new LSB4());
+        pts = new PlaintextSteganographer(LSB4.getInstance());
 
         byte[] file = IOUtils.toByteArray(new FileInputStream("resources/test/4x4.bmp"));
         Bitmap bmp = new Bitmap(file);
 
         byte[] payload = "hola".getBytes();   // 0x68 0x6F 0x6C 0x61
 
-        Message msg = new Message(".txt", payload); // 0x2E 0x74 0x78 0x74
+        Message msg = new Message(payload, ".txt"); // 0x2E 0x74 0x78 0x74
 
 
         assert(pts.canWrite(bmp, msg));
@@ -45,7 +43,7 @@ public class PlaintextSteganographerTest {
 
     @Test
     public void ptsReadTest() throws IOException {
-        pts = new PlaintextSteganographer(new LSB4());
+        pts = new PlaintextSteganographer(LSB4.getInstance());
         byte[] file = IOUtils.toByteArray(new FileInputStream("resources/test/4x4encoded.bmp"));
         Bitmap bmp = new Bitmap(file);
 
@@ -54,6 +52,52 @@ public class PlaintextSteganographerTest {
         assertArrayEquals("hola".getBytes(), message.getPayload());
         assertEquals(".txt", message.getExtension());
     }
+
+
+    @Test
+    public void ladoLSB4_WriteTest() throws IOException {
+        Bitmap bmp = Bitmap.fromFile("resources/test/lado.bmp");
+        byte[] payload = IOUtils.toByteArray(new FileInputStream("resources/test/doc.pdf"));
+
+        Steganographer s = new PlaintextSteganographer(LSB4.getInstance());
+        Message message = new Message(payload, ".pdf");
+        s.write(bmp, message);
+
+        byte[] expected = IOUtils.toByteArray(new FileInputStream("resources/test/ladoLSB4.bmp"));
+
+        assertArrayEquals(expected, bmp.getBytes());
+    }
+
+
+    @Test
+    public void ladoLSB1_WriteTest() throws IOException {
+        Bitmap bmp = Bitmap.fromFile("resources/test/lado.bmp");
+        byte[] payload = IOUtils.toByteArray(new FileInputStream("resources/test/doc.pdf"));
+
+        Steganographer s = new PlaintextSteganographer(LSB1.getInstance());
+        Message message = new Message(payload, ".pdf");
+        s.write(bmp, message);
+
+        byte[] expected = IOUtils.toByteArray(new FileInputStream("resources/test/ladoLSB1.bmp"));
+
+        assertArrayEquals(expected, bmp.getBytes());
+    }
+
+
+    @Test
+    public void ladoELSB_WriteTest() throws IOException {
+        Bitmap bmp = Bitmap.fromFile("resources/test/lado.bmp");
+        byte[] payload = IOUtils.toByteArray(new FileInputStream("resources/test/pic.png"));
+
+        Steganographer s = new PlaintextSteganographer(EnhancedLSB1.getInstance());
+        Message message = new Message(payload, ".png");
+        s.write(bmp, message);
+
+        byte[] expected = IOUtils.toByteArray(new FileInputStream("resources/test/ladoLSBE.bmp"));
+
+        assertArrayEquals(expected, bmp.getBytes());
+    }
+
 
 }
 

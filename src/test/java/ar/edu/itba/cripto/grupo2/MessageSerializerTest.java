@@ -14,7 +14,7 @@ public class MessageSerializerTest {
 
     @Test
     public void serializeTest(){
-        Message message = new Message(".txt", "hola".getBytes());
+        Message message = new Message("hola".getBytes(), ".txt");
 
         byte[] expectedSerialization = {
                 0x00, 0x00, 0x00, 0x04,         // longitud: 4
@@ -39,7 +39,7 @@ public class MessageSerializerTest {
 
         ByteBuffer bb = ByteBuffer.wrap(serialization);
 
-        Message m = MessageSerializer.deserialize(bb, new IdentitySteganography());
+        Message m = MessageSerializer.deserialize(bb, IdentitySteganography.getInstance());
 
         assertArrayEquals("hola".getBytes(), m.getPayload());
         assertEquals(".txt", m.getExtension());
