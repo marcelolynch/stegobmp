@@ -59,7 +59,7 @@ public class EncryptionSettings {
 
         byte[] prev = {}; // D_i
         int offset = 0;   //
-        for(int i = 0 ; i < iterations ; i++){
+        for (int i = 0 ; i < iterations ; i++) {
             byte[] hashable = new byte[prev.length + data.length];
             // Concatenate D_(n-1) || data
             // (No salt)
@@ -140,5 +140,22 @@ public class EncryptionSettings {
                 "\n IV = " +
                 decodePassword(iv.getIV()) +
                 "\n}";
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EncryptionSettings that = (EncryptionSettings) o;
+        return cipherType == that.cipherType &&
+                cipherMode == that.cipherMode &&
+                Objects.equals(key, that.key) &&
+                Arrays.equals(iv.getIV(), that.iv.getIV());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cipherType, cipherMode, key, iv.getIV());
     }
 }

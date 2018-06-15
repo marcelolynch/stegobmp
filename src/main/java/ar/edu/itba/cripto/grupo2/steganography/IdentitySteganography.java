@@ -7,7 +7,7 @@ public class IdentitySteganography implements SteganographyStrategy {
     private static IdentitySteganography instance;
 
     public static IdentitySteganography getInstance(){
-        if(instance == null)
+        if (instance == null)
             instance = new IdentitySteganography();
         return instance;
     }

@@ -19,6 +19,10 @@ public class CryptoSteganographer implements Steganographer {
     private final Cipher decryptionCipher;
     private final SteganographyStrategy strategy;
 
+    public EncryptionSettings getSettings() {
+        return settings;
+    }
+
     public CryptoSteganographer(SteganographyStrategy strategy, EncryptionSettings settings){
         this.settings = settings;
         SecretKey key = settings.getKey();
@@ -28,7 +32,7 @@ public class CryptoSteganographer implements Steganographer {
             this.encryptionCipher = Cipher.getInstance(settings.getCode());
             this.decryptionCipher = Cipher.getInstance(settings.getCode());
 
-            if(settings.getCipherMode().isIvRequired()){
+            if (settings.getCipherMode().isIvRequired()) {
                 this.encryptionCipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
                 this.decryptionCipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
             } else {
@@ -91,7 +95,7 @@ public class CryptoSteganographer implements Steganographer {
             }
         }
 
-        if(i < encrypted.length){
+        if (i < encrypted.length) {
             throw new IllegalStateException();
         }
 
@@ -103,12 +107,12 @@ public class CryptoSteganographer implements Steganographer {
         ByteBuffer buffer = ByteBuffer.wrap(bitmap.getImageBytes()).order(ByteOrder.BIG_ENDIAN);
         int size = MessageSerializer.getEncodingSize(buffer, strategy);
 
-        if(!strategy.canHold(buffer, size)){
+        if (!strategy.canHold(buffer, size)) {
             throw new IllegalArgumentException();
         }
 
         ByteArrayOutputStream decryption = new ByteArrayOutputStream();
-        for(int i = 0 ; i < size ; i++){
+        for (int i = 0 ; i < size ; i++) {
             byte b = strategy.nextDecodedByte(buffer);
             decryption.write(b);
         }

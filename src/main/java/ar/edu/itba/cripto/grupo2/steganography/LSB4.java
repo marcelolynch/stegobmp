@@ -13,7 +13,7 @@ public class LSB4 implements SteganographyStrategy {
     private static LSB4 instance;
 
     public static LSB4 getInstance(){
-        if(instance == null)
+        if (instance == null)
             instance = new LSB4();
         return instance;
     }

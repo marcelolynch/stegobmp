@@ -10,7 +10,7 @@ public class LSB1 implements SteganographyStrategy {
     private static LSB1 instance;
 
     public static LSB1 getInstance(){
-        if(instance == null)
+        if (instance == null)
             instance = new LSB1();
         return instance;
     }
@@ -35,7 +35,7 @@ public class LSB1 implements SteganographyStrategy {
     public byte nextDecodedByte(ByteBuffer buffer) {
         int b = 0;
 
-        for(int i = 0 ; i < WRITTEN_BYTES_PER_BYTE ; i++){
+        for (int i = 0 ; i < WRITTEN_BYTES_PER_BYTE ; i++) {
             int next = buffer.get() & LAST_BYTE_MASK;
             b = (b << 1) | next;
         }

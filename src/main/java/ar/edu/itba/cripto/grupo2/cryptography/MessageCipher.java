@@ -19,7 +19,7 @@ public class MessageCipher {
     private static MessageCipher mc = new MessageCipher();
 
     public static MessageCipher getInstance(){
-        if(mc == null){
+        if (mc == null) {
             mc = new MessageCipher();
         }
         return mc;

@@ -12,7 +12,7 @@ public class EnhancedLSB1 implements SteganographyStrategy {
     private static EnhancedLSB1 instance;
 
     public static EnhancedLSB1 getInstance(){
-        if(instance == null)
+        if (instance == null)
             instance = new EnhancedLSB1();
         return instance;
     }
@@ -62,7 +62,7 @@ public class EnhancedLSB1 implements SteganographyStrategy {
     public int maximumEncodingSize(ByteBuffer buffer) {
         int count = 0;
         buffer.mark();
-        while(buffer.hasRemaining()) {
+        while (buffer.hasRemaining()) {
             byte b = buffer.get();
             if ((b & BYTE_MASK) >= 254) {   // Cast to int to make comparison
                 count++;

@@ -26,12 +26,12 @@ public class MessageSerializer {
         y lo transforma en un mensaje.
      */
     public static Message deserialize(final ByteBuffer buffer, SteganographyStrategy strategy){
-        if(buffer.remaining() < FILE_SIZE_HEADER_BYTES){
+        if (buffer.remaining() < FILE_SIZE_HEADER_BYTES) {
             throw new IllegalArgumentException();
         }
 
         int length = getEncodingSize(buffer, strategy);
-        if(!strategy.canHold(buffer, length)){
+        if (!strategy.canHold(buffer, length)) {
             throw new IllegalArgumentException();
         }
 
