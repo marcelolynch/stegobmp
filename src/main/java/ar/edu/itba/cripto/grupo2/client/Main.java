@@ -3,7 +3,7 @@ package ar.edu.itba.cripto.grupo2.client;
 import ar.edu.itba.cripto.grupo2.bitmap.Bitmap;
 import ar.edu.itba.cripto.grupo2.steganography.Message;
 import ar.edu.itba.cripto.grupo2.steganography.Steganographer;
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
 
 import java.io.FileInputStream;
@@ -13,10 +13,6 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class Main {
-
-
-
-
     public static void mainO(String[] args) throws ParseException {
         try {
             ProgramSettings programSettings = OptionsHelper.getProgramSettings(args);
@@ -35,8 +31,6 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     public static void main(String[] args) {
@@ -74,10 +68,4 @@ public class Main {
 
         IOUtils.write(m.getPayload(), new FileOutputStream(outputPath));
     }
-
-
-
-
-
-
 }

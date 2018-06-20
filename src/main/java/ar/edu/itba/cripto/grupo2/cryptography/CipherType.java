@@ -11,7 +11,7 @@ public enum CipherType {
     private final int keyLength; // En bytes
     private int blockSize; // En bytes
 
-    CipherType(String code, int keyLength, int blockSize){
+    CipherType(String code, int keyLength, int blockSize) {
         this.keyLength = keyLength;
         this.code = code;
         this.blockSize = blockSize;
@@ -21,7 +21,9 @@ public enum CipherType {
         return code;
     }
 
-    public int getKeyLength() { return keyLength;}
+    public int getKeyLength() {
+        return keyLength;
+    }
 
     public int getBlockSize() {
         return blockSize;

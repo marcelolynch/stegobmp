@@ -21,7 +21,6 @@ public class OptionsHelper {
 
     private static final Options options;
 
-
     static {
         options = new Options();
         options.addOption(EMBED, false, "Indica que se va a ocultar información")
@@ -35,41 +34,32 @@ public class OptionsHelper {
                 .addOption(PASSWORD, true, "Password de encripcion");
     }
 
-
-    public static Options getOptions() {
+    private static Options getOptions() {
         return options;
     }
-
-
 
     private static Steganographer getSteganographer(CommandLine cmd) throws IllegalOptionException, InvalidOptionsException {
         SteganographyStrategy strategy = getSteganographyStrategy(cmd);
 
         Steganographer steganographer;
 
-        if (cmd.hasOption(ALGORITHM) && cmd.hasOption(PASSWORD) && cmd.hasOption(FEEDBACK_MODE)) {
+        if (cmd.hasOption(PASSWORD)) {
             EncryptionSettings settings = getEncryptionSettings(cmd);
-            steganographer = new CryptoSteganographer(strategy,settings);
-        } else if (!cmd.hasOption(ALGORITHM) && !cmd.hasOption(PASSWORD) && !cmd.hasOption(FEEDBACK_MODE)){
-            steganographer = new PlaintextSteganographer(strategy);
+            steganographer = new CryptoSteganographer(strategy, settings);
         } else {
-            throw new InvalidOptionsException("Las opciones -m, -pass, -a deben especificarse todas (o ninguna para esteganografiar sin encripción)");
+            steganographer = new PlaintextSteganographer(strategy);
         }
 
         return steganographer;
-
     }
 
-
     private static EncryptionSettings getEncryptionSettings(CommandLine cmd) throws IllegalOptionException {
-        String password;
+        String algorithm = cmd.hasOption(ALGORITHM) ? cmd.getOptionValue(ALGORITHM) : "aes128";
+        String fm = cmd.hasOption(FEEDBACK_MODE) ? cmd.getOptionValue(FEEDBACK_MODE) : "cbc";
         CipherMode mode;
         CipherType type;
 
-        password = cmd.getOptionValue(PASSWORD);
-
-
-        switch (cmd.getOptionValue(ALGORITHM).toUpperCase()) {
+        switch (algorithm.toUpperCase()) {
             case "DES":
                 type = CipherType.DES;
                 break;
@@ -83,11 +73,10 @@ public class OptionsHelper {
                 type = CipherType.AES_256;
                 break;
             default:
-                throw new IllegalOptionException("El parametro -a requiere aes128, aes192 o aes256 como argumentos");
+                throw new IllegalOptionException("El parametro -a solo acepta las opciones: des, aes128, aes192, aes256. Se obtuvo: " + algorithm);
         }
 
-
-        switch (cmd.getOptionValue(FEEDBACK_MODE).toUpperCase()) {
+        switch (fm.toUpperCase()) {
             case "CBC":
                 mode = CipherMode.CBC;
                 break;
@@ -101,22 +90,21 @@ public class OptionsHelper {
                 mode = CipherMode.CFB;
                 break;
             default:
-                throw new IllegalOptionException("El parámetro -m requiere alguna de las opciones: cbc, ecb, ofb, cfb");
+                throw new IllegalOptionException("El parámetro -m solo acepta las opciones: cbc, ecb, ofb, cfb. Se obtuvo: " + fm);
         }
 
-        return new EncryptionSettings(type, mode, password);
+        return new EncryptionSettings(type, mode, cmd.getOptionValue(PASSWORD));
     }
 
-
-    private static SteganographyStrategy getSteganographyStrategy(CommandLine cmd) throws InvalidOptionsException {
-        switch(cmd.getOptionValue(STEG).toUpperCase()){
+    private static SteganographyStrategy getSteganographyStrategy(CommandLine cmd) throws IllegalOptionException {
+        String steg = cmd.getOptionValue(STEG);
+        switch (steg.toUpperCase()) {
             case "LSB1": return LSB1.getInstance();
             case "LSB4": return LSB4.getInstance();
             case "LSBE": return EnhancedLSB1.getInstance();
-            default:     throw new InvalidOptionsException("Los parametros de encripción (-m, -pass, -a) deben aparecer todos o ninguno");
+            default:     throw new IllegalOptionException("El parámetro -steg requiere alguna de las opciones: lsb1, lsb4, lsbe. Se obtuvo " + steg);
         }
     }
-
 
     public static ProgramSettings getProgramSettings(String[] args) throws ParseException, InvalidOptionsException, IllegalOptionException {
         CommandLineParser parser = new DefaultParser();
@@ -132,7 +120,6 @@ public class OptionsHelper {
             throw new InvalidOptionsException("No puede especificarse -embed y -extract al mismo tiempo");
         }
 
-
         if (cmd.hasOption(EMBED)) {
             if(!cmd.hasOption(IN)){
                 throw new InvalidOptionsException("Debe especificarse un archivo de entrada con -in si se especificó -embed");
@@ -140,12 +127,10 @@ public class OptionsHelper {
             settingsBuilder.toEmbed(cmd.getOptionValue(IN));
         }
 
-
         settingsBuilder.carrierBitmap(cmd.getOptionValue(P))
                         .outputPath(cmd.getOptionValue(OUT))
                         .steganographer(getSteganographer(cmd));
 
         return settingsBuilder.build();
-
     }
 }
