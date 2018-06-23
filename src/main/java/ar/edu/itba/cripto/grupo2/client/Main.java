@@ -7,13 +7,11 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Optional;
 
 public class Main {
-    public static void mainO(String[] args) throws ParseException {
+    public static void main(String[] args) {
         try {
             ProgramSettings programSettings = OptionsHelper.getProgramSettings(args);
             if (programSettings.mustExtract()) {
@@ -21,25 +19,10 @@ public class Main {
             } else {
                 embed(programSettings.getToEmbed().get(), programSettings.getCarrierBitmap(), programSettings.getOutputPath(), programSettings.getSteganographer());
             }
-
-        } catch (InvalidOptionsException e) { // TODO
-            e.printStackTrace();
-        } catch (IllegalOptionException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (InvalidOptionsException | IllegalOptionException | ParseException | IOException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
         }
-    }
-
-    public static void main(String[] args) {
-        System.out.println("{");
-        for(String s : args){
-            System.out.printf("\"%s\"", s);
-            System.out.print(", ");
-        }
-        System.out.println("\n}");
     }
 
     private static void embed(String toEmbed, String carrierBitmap, String outputPath, Steganographer steganographer) throws IOException {
@@ -47,7 +30,7 @@ public class Main {
         byte[] payload = IOUtils.toByteArray(new FileInputStream(toEmbed));
         String[] split = toEmbed.split(".");
         String extension;
-        if (split.length < 2){
+        if (split.length < 2) {
             extension = ""; // TODO: Que hacer en este caso
         } else {
            extension = split[split.length - 1];
@@ -58,7 +41,6 @@ public class Main {
         steganographer.write(bitmap, m);
 
         IOUtils.write(bitmap.getBytes(), new FileOutputStream(outputPath));
-
     }
 
     private static void extract(String carrierBitmap, String outputPath, Steganographer steganographer) throws IOException {

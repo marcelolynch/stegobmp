@@ -9,7 +9,7 @@ import ar.edu.itba.cripto.grupo2.client.ProgramSettings.*;
 
 public class OptionsHelper {
 
-    private final static String EMBED = "embed";
+    private static final String EMBED = "embed";
     private static final String IN = "in";
     private static final String P = "p";
     private static final String OUT = "out";
@@ -38,6 +38,34 @@ public class OptionsHelper {
         return options;
     }
 
+    public static ProgramSettings getProgramSettings(String[] args) throws ParseException, InvalidOptionsException, IllegalOptionException {
+        CommandLineParser parser = new DefaultParser();
+        CommandLine cmd = parser.parse(OptionsHelper.getOptions(), args);
+
+        ProgramSettingsBuilder settingsBuilder = ProgramSettings.getBuilder();
+
+        if (!cmd.hasOption(EMBED) && !cmd.hasOption(EXTRACT)) {
+            throw new InvalidOptionsException("Debe especificarse -embed o -extract");
+        }
+
+        if (cmd.hasOption(EMBED) && cmd.hasOption(EXTRACT)) {
+            throw new InvalidOptionsException("No puede especificarse -embed y -extract al mismo tiempo");
+        }
+
+        if (cmd.hasOption(EMBED)) {
+            if(!cmd.hasOption(IN)) {
+                throw new InvalidOptionsException("Debe especificarse un archivo de entrada con -in si se especificó -embed");
+            }
+            settingsBuilder.toEmbed(cmd.getOptionValue(IN));
+        }
+
+        settingsBuilder.carrierBitmap(cmd.getOptionValue(P))
+                .outputPath(cmd.getOptionValue(OUT))
+                .steganographer(getSteganographer(cmd));
+
+        return settingsBuilder.build();
+    }
+
     private static Steganographer getSteganographer(CommandLine cmd) throws IllegalOptionException, InvalidOptionsException {
         SteganographyStrategy strategy = getSteganographyStrategy(cmd);
 
@@ -51,6 +79,16 @@ public class OptionsHelper {
         }
 
         return steganographer;
+    }
+
+    private static SteganographyStrategy getSteganographyStrategy(CommandLine cmd) throws IllegalOptionException {
+        String steg = cmd.getOptionValue(STEG);
+        switch (steg.toUpperCase()) {
+            case "LSB1": return LSB1.getInstance();
+            case "LSB4": return LSB4.getInstance();
+            case "LSBE": return EnhancedLSB1.getInstance();
+            default:     throw new IllegalOptionException("El parámetro -steg requiere alguna de las opciones: lsb1, lsb4, lsbe. Se obtuvo " + steg);
+        }
     }
 
     private static EncryptionSettings getEncryptionSettings(CommandLine cmd) throws IllegalOptionException {
@@ -94,43 +132,5 @@ public class OptionsHelper {
         }
 
         return new EncryptionSettings(type, mode, cmd.getOptionValue(PASSWORD));
-    }
-
-    private static SteganographyStrategy getSteganographyStrategy(CommandLine cmd) throws IllegalOptionException {
-        String steg = cmd.getOptionValue(STEG);
-        switch (steg.toUpperCase()) {
-            case "LSB1": return LSB1.getInstance();
-            case "LSB4": return LSB4.getInstance();
-            case "LSBE": return EnhancedLSB1.getInstance();
-            default:     throw new IllegalOptionException("El parámetro -steg requiere alguna de las opciones: lsb1, lsb4, lsbe. Se obtuvo " + steg);
-        }
-    }
-
-    public static ProgramSettings getProgramSettings(String[] args) throws ParseException, InvalidOptionsException, IllegalOptionException {
-        CommandLineParser parser = new DefaultParser();
-        CommandLine cmd = parser.parse(OptionsHelper.getOptions(), args);
-
-        ProgramSettingsBuilder settingsBuilder = ProgramSettings.getBuilder();
-
-        if (!cmd.hasOption(EMBED) && !cmd.hasOption(EXTRACT)) {
-            throw new InvalidOptionsException("Debe especificarse -embed o -extract");
-        }
-
-        if (cmd.hasOption(EMBED) && cmd.hasOption(EXTRACT)) {
-            throw new InvalidOptionsException("No puede especificarse -embed y -extract al mismo tiempo");
-        }
-
-        if (cmd.hasOption(EMBED)) {
-            if(!cmd.hasOption(IN)){
-                throw new InvalidOptionsException("Debe especificarse un archivo de entrada con -in si se especificó -embed");
-            }
-            settingsBuilder.toEmbed(cmd.getOptionValue(IN));
-        }
-
-        settingsBuilder.carrierBitmap(cmd.getOptionValue(P))
-                        .outputPath(cmd.getOptionValue(OUT))
-                        .steganographer(getSteganographer(cmd));
-
-        return settingsBuilder.build();
     }
 }
