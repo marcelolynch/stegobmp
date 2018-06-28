@@ -67,7 +67,7 @@ public class BitmapInfoHeader {
 
     public BitmapInfoHeader(byte[] header) {
         if (header.length != INFO_HEADER_SIZE) {
-            throw new IllegalArgumentException("Wrong header size: expecting " + INFO_HEADER_SIZE);
+            throw new IllegalArgumentException("Wrong info header size for 24-bit bitmap: expecting " + INFO_HEADER_SIZE);
         }
 
         ByteBuffer bb = ByteBuffer.wrap(header).order(ByteOrder.LITTLE_ENDIAN);

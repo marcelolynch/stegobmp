@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 public interface SteganographyStrategy {
 
     default boolean canHold(ByteBuffer buffer, int size) {
-        return maximumEncodingSize(buffer) >= size;
+        return size > 0 && maximumEncodingSize(buffer) >= size;
     }
 
     byte[] nextEncodedBytes(byte b, ByteBuffer buffer);

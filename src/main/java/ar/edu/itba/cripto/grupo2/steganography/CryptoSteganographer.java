@@ -40,7 +40,6 @@ public class CryptoSteganographer implements Steganographer {
                 this.decryptionCipher.init(Cipher.DECRYPT_MODE, key);
             }
         } catch (Exception e) {
-            e.printStackTrace();
             throw new IllegalArgumentException("Incorrect settings");
         }
 
@@ -78,7 +77,7 @@ public class CryptoSteganographer implements Steganographer {
             byte[] encrypted = encryptionCipher.doFinal(toEncrypt);
             writeOffset += writeToBitmap(bitmap, writeOffset, picBuffer, encrypted);
         } catch (Exception e){
-            throw new IllegalStateException();
+            throw new IllegalStateException("There was an error with the encryption");
         }
 
     }
@@ -96,7 +95,7 @@ public class CryptoSteganographer implements Steganographer {
         }
 
         if (i < encrypted.length) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("The bitmap couln't hold the file");
         }
 
         return written;
@@ -121,10 +120,8 @@ public class CryptoSteganographer implements Steganographer {
             byte[] serializedMessage = decryptionCipher.doFinal(decryption.toByteArray());
             ByteBuffer messageBuffer = ByteBuffer.wrap(serializedMessage).order(ByteOrder.BIG_ENDIAN);
             return MessageSerializer.deserialize(messageBuffer, IdentitySteganography.getInstance());
-        } catch (IllegalBlockSizeException e) {
-            throw new IllegalStateException();
-        } catch (BadPaddingException e) {
-            throw new IllegalArgumentException();
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
+            throw new IllegalArgumentException("The encoded ciphertext was corrupted (given the provided encryption settings)");
         }
     }
 }

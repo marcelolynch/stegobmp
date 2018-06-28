@@ -19,7 +19,7 @@ public class Main {
             } else {
                 embed(programSettings.getToEmbed().get(), programSettings.getCarrierBitmap(), programSettings.getOutputPath(), programSettings.getSteganographer());
             }
-        } catch (InvalidOptionsException | IllegalOptionException | ParseException | IOException e) {
+        } catch (InvalidOptionsException | IllegalOptionException | ParseException | IOException | IllegalArgumentException e) {
             System.err.println(e.getMessage());
             System.exit(1);
         }
@@ -31,7 +31,7 @@ public class Main {
         String[] split = toEmbed.split(".");
         String extension;
         if (split.length < 2) {
-            extension = ""; // TODO: Que hacer en este caso
+            extension = "";
         } else {
            extension = split[split.length - 1];
         }
@@ -45,9 +45,16 @@ public class Main {
 
     private static void extract(String carrierBitmap, String outputPath, Steganographer steganographer) throws IOException {
         Bitmap bitmap = Bitmap.fromFile(carrierBitmap);
-        Message m = steganographer.read(bitmap);
-        outputPath = outputPath + m.getExtension();  // Se guarda con la extension
+        try{
+            Message m = steganographer.read(bitmap);
+            if (outputPath.length() == 0) {
+                outputPath = "out";
+            }
+            outputPath = outputPath + m.getExtension();  // Se guarda con la extension
+            IOUtils.write(m.getPayload(), new FileOutputStream(outputPath));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("The provided bitmap can't contain an embedded file with the settings provided or is malformed");
+        }
 
-        IOUtils.write(m.getPayload(), new FileOutputStream(outputPath));
     }
 }

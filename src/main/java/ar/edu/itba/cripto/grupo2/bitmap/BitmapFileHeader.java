@@ -25,7 +25,7 @@ public class BitmapFileHeader {
 
     public BitmapFileHeader(byte[] header) {
         if (header.length != FILE_HEADER_SIZE) {
-            throw new IllegalArgumentException("Wrong header size: expecting " + FILE_HEADER_SIZE);
+            throw new IllegalArgumentException("Wrong file header size for 24-bit bitmap: expecting " + FILE_HEADER_SIZE);
         }
 
         ByteBuffer bb = ByteBuffer.wrap(header).order(ByteOrder.LITTLE_ENDIAN);

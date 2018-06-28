@@ -23,15 +23,15 @@ public class OptionsHelper {
 
     static {
         options = new Options();
-        options.addOption(EMBED, false, "Indica que se va a ocultar información")
-                .addOption(EXTRACT, false, "Indica que se va a extraer información")
-                .addRequiredOption(P, P, true, "Archivo bmp portador")
-                .addOption(IN, true, "Archivo que se va a ocultar")
-                .addRequiredOption(OUT, OUT, true, "Archivo de salida")
-                .addRequiredOption(STEG, STEG, true, "Algoritmo de esteganografiado: LSB de 1bit (LSB1), LSB de 4 bits (LSB4), LSB Enhanced (LSBE)")
-                .addOption(ALGORITHM, true, "Algoritmo de encripción")
+        options.addOption(EMBED, false, "This flag indicates that information will be encoded into the carrier bitmap")
+                .addOption(EXTRACT, false, "This flag indicates that information will be extracted from the carrier bitmap")
+                .addRequiredOption(P, P, true, "Carrier bitmap")
+                .addOption(IN, true, "File to be hidden")
+                .addRequiredOption(OUT, OUT, true, "Output file")
+                .addRequiredOption(STEG, STEG, true, "Stego algorithm: 1bit LSB  (LSB1),  4-bit LSB (LSB4), LSB Enhanced (LSBE). Case insensitive")
+                .addOption(ALGORITHM, true, "Encryption algorithm")
                 .addOption(FEEDBACK_MODE, true, "Feedback mode")
-                .addOption(PASSWORD, true, "Password de encripcion");
+                .addOption(PASSWORD, true, "Encryption password");
     }
 
     private static Options getOptions() {
@@ -45,16 +45,16 @@ public class OptionsHelper {
         ProgramSettingsBuilder settingsBuilder = ProgramSettings.getBuilder();
 
         if (!cmd.hasOption(EMBED) && !cmd.hasOption(EXTRACT)) {
-            throw new InvalidOptionsException("Debe especificarse -embed o -extract");
+            throw new InvalidOptionsException("Either -embed or -extract must be specified");
         }
 
         if (cmd.hasOption(EMBED) && cmd.hasOption(EXTRACT)) {
-            throw new InvalidOptionsException("No puede especificarse -embed y -extract al mismo tiempo");
+            throw new InvalidOptionsException("-embed and -extract can't be specified at the same time");
         }
 
         if (cmd.hasOption(EMBED)) {
             if(!cmd.hasOption(IN)) {
-                throw new InvalidOptionsException("Debe especificarse un archivo de entrada con -in si se especificó -embed");
+                throw new InvalidOptionsException("An input file must be provided with -in while in embed mode");
             }
             settingsBuilder.toEmbed(cmd.getOptionValue(IN));
         }
@@ -87,7 +87,7 @@ public class OptionsHelper {
             case "LSB1": return LSB1.getInstance();
             case "LSB4": return LSB4.getInstance();
             case "LSBE": return EnhancedLSB1.getInstance();
-            default:     throw new IllegalOptionException("El parámetro -steg requiere alguna de las opciones: lsb1, lsb4, lsbe. Se obtuvo " + steg);
+            default:     throw new IllegalOptionException("The -steg parameter requires one of the following arguments (case insensitive) : lsb1, lsb4, lsbe. The argument provided was " + steg);
         }
     }
 
@@ -111,7 +111,7 @@ public class OptionsHelper {
                 type = CipherType.AES_256;
                 break;
             default:
-                throw new IllegalOptionException("El parametro -a solo acepta las opciones: des, aes128, aes192, aes256. Se obtuvo: " + algorithm);
+                throw new IllegalOptionException("The -a option only takes the following (case insensitive): des, aes128, aes192, aes256. The argument provided was: " + algorithm);
         }
 
         switch (fm.toUpperCase()) {
@@ -128,7 +128,7 @@ public class OptionsHelper {
                 mode = CipherMode.CFB;
                 break;
             default:
-                throw new IllegalOptionException("El parámetro -m solo acepta las opciones: cbc, ecb, ofb, cfb. Se obtuvo: " + fm);
+                throw new IllegalOptionException("The -m option only takes the following: cbc, ecb, ofb, cfb (case insensitive).  The argument provided was: " + fm);
         }
 
         return new EncryptionSettings(type, mode, cmd.getOptionValue(PASSWORD));
