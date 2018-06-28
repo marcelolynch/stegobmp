@@ -77,7 +77,7 @@ public class CryptoSteganographer implements Steganographer {
             byte[] encrypted = encryptionCipher.doFinal(toEncrypt);
             writeOffset += writeToBitmap(bitmap, writeOffset, picBuffer, encrypted);
         } catch (Exception e){
-            throw new IllegalStateException("There was an error with the encryption");
+            throw new IllegalStateException("There was an error with the encryption: " + e.getMessage());
         }
 
     }
@@ -95,7 +95,7 @@ public class CryptoSteganographer implements Steganographer {
         }
 
         if (i < encrypted.length) {
-            throw new IllegalStateException("The bitmap couln't hold the file");
+            throw new IllegalStateException("The bitmap couldn't hold the file");
         }
 
         return written;
