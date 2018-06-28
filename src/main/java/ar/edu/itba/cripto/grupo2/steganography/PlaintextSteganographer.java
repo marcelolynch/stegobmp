@@ -28,7 +28,7 @@ public class PlaintextSteganographer implements Steganographer {
     @Override
     public final void write(Bitmap bitmap, Message p) throws IllegalArgumentException {
         if (!canWrite(bitmap, p)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Bitmap cannot hold the given input file");
         }
         byte[] payload = p.getPayload();
 

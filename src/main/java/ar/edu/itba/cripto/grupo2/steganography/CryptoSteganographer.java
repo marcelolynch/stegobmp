@@ -122,12 +122,9 @@ public class CryptoSteganographer implements Steganographer {
             ByteBuffer messageBuffer = ByteBuffer.wrap(serializedMessage).order(ByteOrder.BIG_ENDIAN);
             return MessageSerializer.deserialize(messageBuffer, IdentitySteganography.getInstance());
         } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
             throw new IllegalStateException();
         } catch (BadPaddingException e) {
             throw new IllegalArgumentException();
         }
-
-
     }
 }

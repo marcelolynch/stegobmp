@@ -49,7 +49,7 @@ public class MessageSerializer {
         }
 
         if (next != 0) { // Malformado - no termina en \0
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Badly formed message. It must end with \0");
         }
 
         String extension = new String(extensionBytes.toByteArray());
